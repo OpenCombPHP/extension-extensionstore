@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Extension>
+	<name>extensionstore</name>
+	<version>0.1</version>
+	<title>扩展商店</title>
+	
+	<class>org.opencomb.extensionstore.ExtensionStore</class>
+	<package folder="/class" namespace="org.opencomb.extensionstore" />
+	
+	<publicFolder folder="/public" />
+	
+	<template folder="/template" />
+	
+</Extension>
