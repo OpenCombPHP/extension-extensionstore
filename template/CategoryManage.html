@@ -1,0 +1,108 @@
+<lib name='jquery' />
+<div id='catList'>
+	<h1>类型管理</h1>
+	<div class="coresystem-submenu"><a href="?c=org.opencomb.opencms.category.CreateCategory&target=end">+新建类型</a></div>
+	<script type="text/javascript">
+		function confirmDel(){
+			if(!confirm("确认删除类型吗?")){
+				return false;
+			}
+		}
+	</script>
+	<table>
+		<thead>
+			<tr height="30">
+				<th width="30">选中</th>
+				<th width="60">id</th>
+				<th >分类名称</th>
+				<th width="90">新增子类型</th>
+				<th width="50">编辑</th>
+				<th width="100">排序</th>
+				<th width="50">删除</th>
+			</tr>
+		</thead>
+		<tbody id="tableStyle">
+			<model:foreach>
+			<tr>
+				<td><input type="checkbox" class='cat_select' value="{=$theModel['eid']}"/></td>
+				<td>{=$theModel['eid']}</td>
+				<td><span class='cat_depth'>{=str_repeat("-", org\jecat\framework\mvc\model\db\Category::depth($theModel))}</span><a href="?c=org.opencomb.opencms.extension.ExtensionList&cid={=$theModel['eid']}">{=$theModel['title']}</a></td>
+				<td><a href="?c=org.opencomb.opencms.category.CreateCategory&target={=org\jecat\framework\mvc\model\db\Category::rightPoint($theModel)}">新增子类型</a></td>
+				<td><a href="?c=org.opencomb.opencms.category.EditCategory&cid={=$theModel['eid']}">编辑</a></td>
+				<td><a href="?c=org.opencomb.opencms.category.CategorySort&cid={=$theModel['eid']}&to=up" class='category_go_up'>向上</a> | 
+					<a href="?c=org.opencomb.opencms.category.CategorySort&cid={=$theModel['eid']}&to=down" class='category_go_down'>向下</a></td>
+				<td><a href="?c=org.opencomb.opencms.category.DeleteCategory&cid={=$theModel['eid']}" onclick="javascript:return confirmDel();">删除</a></td>
+			</tr>
+			</model:foreach>
+		</tbody>
+	</table>
+	<div id="batch_panel">
+		<a href="#" class="select_all">全选</a>|<a href="#" class="unselect_all">反选</a><br/>
+		<span>批量操作: </span>
+		<select id='operation_select'>
+			<option value='move_extensions'>转移扩展</option>
+			<option value='del_categorys'>删除分类</option>
+		</select>
+		<widget id='category_cat' />
+		<button class='go_operation'>执行</button>
+		<div id="ajaxMsg"></div>
+	</div>
+</div>
+
+<script type="text/javascript">
+jQuery(function(){
+	var TbRow = document.getElementById("tableStyle");
+	if (TbRow != null){
+		for (var i=0;i<TbRow.rows.length ;i++ ){
+			if (TbRow.rows[i].rowIndex%2==1){
+				TbRow.rows[i].style.backgroundColor="";
+			}
+			else{
+				TbRow.rows[i].style.backgroundColor="#F1F1F1";
+			}
+		}
+	}
+	//全选
+	jQuery('.select_all').click(function(e){
+		jQuery('.cat_select').attr('checked',true);
+		e.stopPropagation();
+	});
+	//反选
+	jQuery('.unselect_all').click(function(e){
+		jQuery('.cat_select').each(function(b,v){
+			jQuery(v).attr('checked',!jQuery(v).attr('checked'));
+		});
+		e.stopPropagation();
+	});
+	//执行操作
+	jQuery('.go_operation').click(function(){
+		var selectedCat = [];
+		jQuery('.cat_select:checked').each(function(b,v){
+			selectedCat.push(jQuery(v).val());
+		}); 
+		//转移扩展
+		if(jQuery("#operation_select").val() == "move_extensions"){
+			var targetCid = jQuery("#category_cat").val();
+			jQuery.ajax({
+				url : "?c=org.opencomb.opencms.extension.MoveExtensions&rspn=msgqueue",
+				data : "&from=" + selectedCat.join('_') + "&to="+targetCid,
+				success : function(msg){
+					jQuery("#ajaxMsg").html(msg);
+				}
+			});
+		}else if(jQuery("#operation_select").val() == "del_categorys"){
+			location.href='/?c=org.opencomb.opencms.category.DeleteCategory&cid=' + selectedCat.join(',');
+		}
+	});
+	//排序操作
+	jQuery('.category_go_up , .category_go_down').click(function(){
+		jQuery.ajax({
+			url : jQuery(this).attr('href')+"&rspn=msgqueue",
+			success : function(msg){
+				location.reload() ;  //刷新页面直接看结果
+			}
+		});
+		return false;
+	});
+});
+</script>

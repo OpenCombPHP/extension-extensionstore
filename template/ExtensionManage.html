@@ -1,0 +1,135 @@
+<lib name='jquery'/>
+<div id='artList'>
+	<h2>扩展管理</h2>
+	<div class="coresystem-submenu">
+		<div class='art_search'>
+			<select id='art_cat_select'>
+				<option value='0'>全部</option>
+				<foreach for='$aCatIter' item="aCatModel">
+				<option value='{=$aCatModel['eid']}' {=$theParams->get('eid')==$aCatModel['eid'] ? "selected":''}>
+					{=str_repeat("-", \org\jecat\framework\mvc\model\db\Category::depth($aCatModel))}
+					{=$aCatModel['title']}
+				</option>
+				</foreach>
+			</select>
+			<input type='text' class='search_text' value="{=$theParams['title']}"/>
+			<a href='/?c=org.opencomb.opencms.extension.ExtensionManage&title=' class='search_button' title='依据扩展部分标题搜索扩展'>搜索</a>
+		</div>
+		<a href='?c=org.opencomb.opencms.extension.CreateExtension'>+ 新建扩展</a>
+	</div>
+	<script type="text/javascript">
+		function confirmDel(){
+			if(!confirm("确认删除扩展吗?")){
+				return false;
+			}
+		}
+	</script>
+	<table>
+		<thead>
+			<tr>
+				<th width="25px">选中</th>
+				<th width="50px">id</th>
+				<th>扩展名称</th>
+				<th>扩展类型</th>
+				<th width="60px">浏览次数</th>
+				<th width="50px">编辑</th>
+				<th width="50px">删除</th>
+			</tr>
+		</thead>
+		<tbody id="tableStyle">
+			<foreach for="$aArtIter" item="aArt">
+			<tr>
+				<td><input type="checkbox" class='art_select' value='{=$aArt["aid"]}'/></td>
+				<td>{=$aArt['aid']}</td>
+				{#?
+					$sStyle = '';
+					$sStyle.=$aArt['title_bold']==1 ? 'font-weight: bold;' : '';
+					$sStyle.=$aArt['title_italic']==1 ? 'font-style: italic;' : '';
+					$sStyle.=$aArt['title_strikethrough']==1 ? 'text-decoration:line-through;' : '';
+					$sStyle.=$aArt['title_color']!='' ? 'color:'.$aArt['title_color'].';' : '';
+				#}
+				<td><a href="?c=org.opencomb.opencms.extension.ExtensionContent&aid={=$aArt['aid']}" style='{=$sStyle}'>{=$aArt['title']}</a></td>
+				<td><a href="?c=org.opencomb.opencms.extension.ExtensionManage&cid={=$aArt['eid']}">{=$aArt['category.title']}</a></td>
+				<td>{=$aArt['views']}</td>
+				<td><a href="?c=org.opencomb.opencms.extension.EditExtension&aid={=$aArt['aid']}">编辑</a></td>
+				<td><a href="?c=org.opencomb.opencms.extension.DeleteExtension&aid={=$aArt['aid']}" onclick="javascript:return confirmDel();">删除</a></td>
+			</tr>
+			</foreach>
+		</tbody>
+	</table>
+</div>
+
+<a href='#' class='select_all'>全选</a>/<a class='unselect_all' href='#'>反选</a>
+<a href='/?c=org.opencomb.opencms.extension.DeleteExtension&aid=' class='delete_extensions'>批量删除</a>
+<widget id="paginator" attr.nums="10" attr.showFirst="1" attr.showLast="1" attr.showTotal="1" attr.showPre="1" attr.showNext="1" />
+
+
+<script type="text/javascript">
+	var TbRow = document.getElementById("tableStyle");
+	if (TbRow != null){
+		for (var i=0;i<TbRow.rows.length ;i++ ){
+			if (TbRow.rows[i].rowIndex%2==1){
+				TbRow.rows[i].style.backgroundColor="";
+			}
+			else{
+				TbRow.rows[i].style.backgroundColor="#F1F1F1";
+			}
+		}
+	}
+	
+	//分类选择扩展
+	jquery('#art_cat_select').change(function(){
+		var href='/?c=org.opencomb.opencms.extension.ExtensionManage';
+		if(jquery(this).val() != '0')
+		{
+			href+="&cid=" + jquery(this).val();
+		}
+		if(jquery('.search_text').val()!=''){
+			href+="&title="+jquery('.search_text').val()
+		}
+		
+		location.href = href;
+	});
+	
+	//搜索扩展
+	jquery(function(){
+		jquery('.search_button').click(function(){
+			var href = jquery(this).attr('href') + jquery('.search_text').val();
+			if(jquery('#art_cat_select').val()!='0'){
+				href+='&cid='+jquery('#art_cat_select').val();
+			}
+			location.href =  href;
+			return false;
+		});
+	});
+	
+	//全选
+	jQuery('.select_all').click(function(e){
+		jQuery('.art_select').attr('checked',true);
+		e.stopPropagation();
+	});
+	//反选
+	jQuery('.unselect_all').click(function(e){
+		jQuery('.art_select').each(function(b,v){
+			jQuery(v).attr('checked',!jQuery(v).attr('checked'));
+		});
+		e.stopPropagation();
+	});
+	
+	//批量删除
+	jQuery('.delete_extensions').click(function(){
+		var sArtToDelete = [];
+		jquery('.art_select').each(function(b,v){
+			if(!v.checked){
+				return ;
+			}
+			sArtToDelete.push(jquery(v).val());
+		});
+		sArtToDelete = sArtToDelete.join(',');
+		if(confirm('确定删除扩展:' + sArtToDelete + "吗?"))
+		{
+			location.href=jquery(this).attr('href') + sArtToDelete;
+		}
+		return false;
+	});
+</script>

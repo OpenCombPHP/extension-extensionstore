@@ -1,7 +1,7 @@
 <?php 
 namespace org\opencomb\extensionstore;
 
-use org\jecat\framework\lang\aop\AOP;
+use org\jecat\framework\system\AccessRouter;
 use org\opencomb\platform\ext\Extension ;
 
 class ExtensionStore extends Extension 
@@ -11,5 +11,8 @@ class ExtensionStore extends Extension
 	 */
 	public function load()
 	{
+		$aAccessRouter = AccessRouter::singleton() ;
+		//设置首页控制器
+		$aAccessRouter->setDefaultController("org\\opencomb\\extensionstore\\Index") ;
 	}
 }

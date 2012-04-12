@@ -1,0 +1,48 @@
+<div id='extensionList' class="extensionList">
+	<msgqueue for="$theController->messageQueue()" />
+	<table width='100%'>
+		<thead>
+			<tr height="30">
+				<th>扩展名称</th>
+				<th>日期</th>
+			</tr>
+		</thead>
+		<tbody id="tableStyle">
+			<model:foreach>
+			<tr>
+				<td>
+				{#?
+					$sStyle = '';
+					$sStyle.=$theModel['title_bold']==1 ? 'font-weight: bold;' : '';
+					$sStyle.=$theModel['title_italic']==1 ? 'font-style: italic;' : '';
+					$sStyle.=$theModel['title_strikethrough']==1 ? 'text-decoration:line-through;' : '';
+					$sStyle.=$theModel['title_color']!='' ? 'color:'.$theModel['title_color'].';' : '';
+					$sUrl= empty($theModel['url']) ? "/?c=org.opencomb.opencms.extension.ExtensionContent&aid={$theModel['aid']}" : $theModel['url'];
+				#}
+					<a href="{=$sUrl}" style="{=$sStyle}">
+						<data>title</data>
+					</a>
+				</td>
+				<td class="extension_time">{=date("Y年m月d日 H:m:s", $theModel['createTime'])}</td>
+			</tr>
+			</model:foreach>
+		</tbody>
+	</table>
+	<script type="text/javascript">
+	var TbRow = document.getElementById("tableStyle");
+	if (TbRow != null){
+		for (var i=0;i<TbRow.rows.length ;i++ ){
+			if (TbRow.rows[i].rowIndex%2==1){
+				TbRow.rows[i].style.backgroundColor="";
+			}
+			else{
+				TbRow.rows[i].style.backgroundColor="#F1F1F1";
+			}
+		}
+	}
+	</script>
+</div>
+
+<widget id="paginator" attr.nums="5" attr.showFirst="1" attr.showLast="1" attr.showTotal="1" attr.showPre="1" attr.showNext="1" />
+
+<views/>
