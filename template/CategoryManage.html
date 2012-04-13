@@ -1,7 +1,7 @@
 <lib name='jquery' />
 <div id='catList'>
 	<h1>类型管理</h1>
-	<div class="coresystem-submenu"><a href="?c=org.opencomb.opencms.category.CreateCategory&target=end">+新建类型</a></div>
+	<div class="coresystem-submenu"><a href="?c=org.opencomb.extensionstore.category.CreateCategory&target=end">+新建类型</a></div>
 	<script type="text/javascript">
 		function confirmDel(){
 			if(!confirm("确认删除类型吗?")){
@@ -24,14 +24,14 @@
 		<tbody id="tableStyle">
 			<model:foreach>
 			<tr>
-				<td><input type="checkbox" class='cat_select' value="{=$theModel['eid']}"/></td>
-				<td>{=$theModel['eid']}</td>
-				<td><span class='cat_depth'>{=str_repeat("-", org\jecat\framework\mvc\model\db\Category::depth($theModel))}</span><a href="?c=org.opencomb.opencms.extension.ExtensionList&cid={=$theModel['eid']}">{=$theModel['title']}</a></td>
-				<td><a href="?c=org.opencomb.opencms.category.CreateCategory&target={=org\jecat\framework\mvc\model\db\Category::rightPoint($theModel)}">新增子类型</a></td>
-				<td><a href="?c=org.opencomb.opencms.category.EditCategory&cid={=$theModel['eid']}">编辑</a></td>
-				<td><a href="?c=org.opencomb.opencms.category.CategorySort&cid={=$theModel['eid']}&to=up" class='category_go_up'>向上</a> | 
-					<a href="?c=org.opencomb.opencms.category.CategorySort&cid={=$theModel['eid']}&to=down" class='category_go_down'>向下</a></td>
-				<td><a href="?c=org.opencomb.opencms.category.DeleteCategory&cid={=$theModel['eid']}" onclick="javascript:return confirmDel();">删除</a></td>
+				<td><input type="checkbox" class='cat_select' value="{=$theModel['cid']}"/></td>
+				<td>{=$theModel['cid']}</td>
+				<td><span class='cat_depth'>{=str_repeat("-", org\jecat\framework\mvc\model\db\Category::depth($theModel))}</span><a href="?c=org.opencomb.extensionstore.extension.ExtensionList&cid={=$theModel['cid']}">{=$theModel['title']}</a></td>
+				<td><a href="?c=org.opencomb.extensionstore.category.CreateCategory&target={=org\jecat\framework\mvc\model\db\Category::rightPoint($theModel)}">新增子类型</a></td>
+				<td><a href="?c=org.opencomb.extensionstore.category.EditCategory&cid={=$theModel['cid']}">编辑</a></td>
+				<td><a href="?c=org.opencomb.extensionstore.category.CategorySort&cid={=$theModel['cid']}&to=up" class='category_go_up'>向上</a> | 
+					<a href="?c=org.opencomb.extensionstore.category.CategorySort&cid={=$theModel['cid']}&to=down" class='category_go_down'>向下</a></td>
+				<td><a href="?c=org.opencomb.extensionstore.category.DeleteCategory&cid={=$theModel['cid']}" onclick="javascript:return confirmDel();">删除</a></td>
 			</tr>
 			</model:foreach>
 		</tbody>
@@ -84,14 +84,14 @@ jQuery(function(){
 		if(jQuery("#operation_select").val() == "move_extensions"){
 			var targetCid = jQuery("#category_cat").val();
 			jQuery.ajax({
-				url : "?c=org.opencomb.opencms.extension.MoveExtensions&rspn=msgqueue",
+				url : "?c=org.opencomb.extensionstore.extension.MoveExtensions&rspn=msgqueue",
 				data : "&from=" + selectedCat.join('_') + "&to="+targetCid,
 				success : function(msg){
 					jQuery("#ajaxMsg").html(msg);
 				}
 			});
 		}else if(jQuery("#operation_select").val() == "del_categorys"){
-			location.href='/?c=org.opencomb.opencms.category.DeleteCategory&cid=' + selectedCat.join(',');
+			location.href='/?c=org.opencomb.extensionstore.category.DeleteCategory&cid=' + selectedCat.join(',');
 		}
 	});
 	//排序操作

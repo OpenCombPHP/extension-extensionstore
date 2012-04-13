@@ -16,7 +16,7 @@ class EditExtension extends ControlPanel
 	public function createBeanConfig()
 	{
 		return array(
-			'title'=>'编辑文章',
+			'title'=>'编辑扩展',
 			'view'=>array(
 				'template'=>'ExtensionForm.html',
 				'class'=>'form',
@@ -34,32 +34,32 @@ class EditExtension extends ControlPanel
 					array(
 							'id'=>'extension_title_bold',
 							'class'=>'checkbox',
-							'title'=>'标题加粗',
+							'title'=>'名称加粗',
 							'exchange'=>'title_bold',
 					),
 					array(
 							'id'=>'extension_title_italic',
 							'class'=>'checkbox',
-							'title'=>'标题斜体',
+							'title'=>'名称斜体',
 							'exchange'=>'title_italic',
 					),
 					array(
 							'id'=>'extension_title_strikethrough',
 							'class'=>'checkbox',
-							'title'=>'标题删除线',
+							'title'=>'名称删除线',
 							'exchange'=>'title_strikethrough',
 					),
 					array(
 							'id'=>'extension_title_color',
 							'class'=>'text',
-							'title'=>'标题颜色',
+							'title'=>'名称颜色',
 							'value'=>'#09C',
 							'exchange'=>'title_color',
 					),
 					array(
 							'id'=>'extension_url',
 							'class'=>'text',
-							'title'=>'文章链接',
+							'title'=>'扩展链接',
 							'exchange'=>'url',
 					),
 				)
@@ -69,8 +69,8 @@ class EditExtension extends ControlPanel
 				'orm'=>array(
 					'table'=>'extension',
 					'hasMany:attachments' => array (
-						'fromkeys' => array ( 'aid',),
-						'tokeys' => array ( 'aid', ),
+						'fromkeys' => array ( 'eid',),
+						'tokeys' => array ( 'eid', ),
 						'table' => 'attachment',
 						'orderby' => 'index'
 					)
@@ -90,12 +90,12 @@ class EditExtension extends ControlPanel
 	public function process()
 	{
 		//权限
-		$this->requirePurview('purview:admin_category','extension',$this->view->widget('extension_cat')->value(),'您没有这个分类的管理权限,无法继续浏览');
+		$this->requirePurview('purview:admin_category','extensionstore',$this->view->widget('extension_cat')->value(),'您没有这个分类的管理权限,无法继续浏览');
 		
 		//为分类select添加option
 		$aCatSelectWidget = $this->view->widget("extension_cat");
 		
-		$aCatSelectWidget->addOption("文章分类...",null,true);
+		$aCatSelectWidget->addOption("扩展分类...",null,true);
 		
 		$this->categoryTree->load();
 		
@@ -106,17 +106,17 @@ class EditExtension extends ControlPanel
 			$aCatSelectWidget->addOption(str_repeat("--", Category::depth($aCat)).$aCat->title,$aCat->cid,false);
 		}
 		
-		//还原文章数据
-		if($this->params->has("aid")){
-			$this->extension->load(array($this->params->get("aid")),array("aid"));
+		//还原扩展数据
+		if($this->params->has("eid")){
+			$this->extension->load(array($this->params->get("eid")),array("eid"));
 			$this->view->exchangeData ( DataExchanger::MODEL_TO_WIDGET);
 		}else{
-			$this->messageQueue ()->create ( Message::error, "未指定文章" );
+			$this->messageQueue ()->create ( Message::error, "未指定扩展" );
 		}
 		
 		$this->setTitle($this->extension->title . " - " . $this->title());
 		
-		$this->view->variables()->set('page_h1',"编辑文章") ;
+		$this->view->variables()->set('page_h1',"编辑扩展") ;
 		$this->view->variables()->set('save_button',"保存修改") ;
 		
 		$this->doActions();
@@ -177,7 +177,7 @@ class EditExtension extends ControlPanel
 			{
 				$arrExtensionFilesList = array();
 			}
-			$aStoreFolder = Extension::flyweight('extension')->FilesFolder();
+			$aStoreFolder = Extension::flyweight('extensionstore')->FilesFolder();
 			$aAchiveStrategy = DateAchiveStrategy::flyweight ( Array (true, true, true ) );
 				
 			$aAttachmentsModel = $this->extension->child('attachments');
@@ -248,11 +248,11 @@ class EditExtension extends ControlPanel
 			//删除用户要删除的已存在附件
 			DeleteExtension::deleteAttachments($arrFilesToDelete);
 			// 					$this->view->hideForm ();
-			$this->messageQueue ()->create ( Message::success, "文章保存成功" );
+			$this->messageQueue ()->create ( Message::success, "扩展保存成功" );
 		}
 		else
 		{
-			$this->messageQueue ()->create ( Message::error, "文章保存失败" );
+			$this->messageQueue ()->create ( Message::error, "扩展保存失败" );
 		}
 	}
 	

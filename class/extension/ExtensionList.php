@@ -12,7 +12,7 @@ class ExtensionList extends Controller
 	public function createBeanConfig()
 	{
 		$arrBean = array(
-			'title'=>'文章列表',
+			'title'=>'扩展列表',
 			'view'=>array(
 				'template'=>'ExtensionList.html',
 				'class'=>'view',
@@ -34,8 +34,8 @@ class ExtensionList extends Controller
 					'limit'=>20,
 					'orderDesc'=>'createTime',
 					'hasOne:category'=>array(
-						'fromkeys'=>'eid',
-						'tokeys'=>'eid',
+						'fromkeys'=>'cid',
+						'tokeys'=>'cid',
 						'columns' => array('title') ,
 						'table'=>'category',
 					) ,
@@ -59,9 +59,9 @@ class ExtensionList extends Controller
 	
 	public function process()
 	{
-		if($this->params->has("eid")){
+		if($this->params->has("cid")){
 			//准备分类信息
-			if(!$this->category->load(array($this->params->get("eid")),array('eid'))){
+			if(!$this->category->load(array($this->params->get("cid")),array('cid'))){
 				$this->messageQueue ()->create ( Message::error, "无效的分类编号" );
 			}
 			
@@ -76,7 +76,7 @@ class ExtensionList extends Controller
 			) ;
 			
 			//把cid传给frame
-			$this->params()->set('eid',$this->params->get("eid"));
+			$this->params()->set('cid',$this->params->get("cid"));
 			
 		}else{
 			$this->messageQueue ()->create ( Message::error, "未指定分类" );
@@ -86,6 +86,6 @@ class ExtensionList extends Controller
 	
 	public function defaultFrameConfig()
 	{
-		return array('class'=>'org\\opencomb\\extension\\frame\\ExtensionFrontFrame') ;
+		return array('class'=>'org\\opencomb\\extensionstore\\frame\\ExtensionFrontFrame') ;
 	}
 }

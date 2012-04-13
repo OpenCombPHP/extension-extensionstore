@@ -10,19 +10,10 @@ use org\opencomb\coresystem\mvc\controller\ControlPanel;
 
 class CreateCategory extends ControlPanel
 {
-	/**
-	 * @example /MVC模式/视图(View)
-	 * @forwiki /MVC模式/视图(View)
-	 * @forwiki /MVC模式/视图/表单视图(FormView)
-	 * @forwiki /MVC模式/视图/表单控件/下拉菜单(Select)
-	 * @forwiki /MVC模式/视图/表单控件/表单控件(FormWidget)
-	 * 
-	 * 演示如何设置一个view的bean
-	 */
 	public function createBeanConfig()
 	{
 		return array(
-			'title'=>'新建分类',  //视图的标题
+			'title'=>'新建分类',  //视图的名称
 			'view'=>array( //view的name属性,格式是view:(name属性)
 				'template'=>'CategoryForm.html',
 				'class'=>'form',    //指定初始化view对象的类,这里使用Formview类,form是Formview的别名
@@ -84,7 +75,7 @@ class CreateCategory extends ControlPanel
 			$aCatSelectWidget->addOption(str_repeat("--", Category::depth($aCat)).$aCat->title,$aCat->cid.":".$aCat->rgt,$bSelect);
 		}
 		
-		$this->view->variables()->set('sPageTitle','新建栏目') ;
+		$this->view->variables()->set('sPageTitle','新建类型') ;
 		
 		$this->doActions();
 	}
@@ -102,18 +93,18 @@ class CreateCategory extends ControlPanel
 			$target = explode(":",$this->view->widget("category_parent")->value());
 			$aCategory = new Category($this->category);
 			if(count($target) == 1){
-				//添加顶级栏目
+				//添加顶级类型
 				$aCategory->insertCategoryToPoint();
 			}else{
-				//添加子栏目
+				//添加子类型
 				$aCategory->insertCategoryToPoint((int)$target[1]);
 			}
 			// 					$this->view->hideForm ();
-			$this->messageQueue ()->create ( Message::success, "栏目保存成功" );
+			$this->messageQueue ()->create ( Message::success, "类型保存成功" );
 		}
 		else
 		{
-			$this->messageQueue ()->create ( Message::error, "栏目保存失败" );
+			$this->messageQueue ()->create ( Message::error, "类型保存失败" );
 		}
 	}
 }

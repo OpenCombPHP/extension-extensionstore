@@ -14,17 +14,10 @@ use org\opencomb\coresystem\mvc\controller\ControlPanel;
 
 class CreateExtension extends ControlPanel
 {
-	/**
-	 * @example /校验器/字符长度校验器(Length):Bean格式演示[1]
-	 * @forwiki /校验器/字符长度校验器(Length)
-	 * @forwiki /MVC模式/视图/表单控件/文件上传(File)
-	 *
-	 * 字符长度校验器的bean配置数组的写法
-	 */
 	public function createBeanConfig()
 	{
 		return array(
-			'title'=>'新建文章',
+			'title'=>'新建扩展',
 			'view'=>array(
 				'template'=>'ExtensionForm.html',
 				'class'=>'form',
@@ -33,7 +26,7 @@ class CreateExtension extends ControlPanel
 					array(
 						'id'=>'extension_title',
 						'class'=>'text',
-						'title'=>'文章标题',
+						'title'=>'扩展名称',
 						'exchange'=>'title',
 						'verifier:notempty'=>array(),
 						'verifier:length'=>array(
@@ -43,32 +36,32 @@ class CreateExtension extends ControlPanel
 					array(
 						'id'=>'extension_title_bold',
 						'class'=>'checkbox',
-						'title'=>'标题加粗',
+						'title'=>'名称加粗',
 						'exchange'=>'title_bold',
 					),
 					array(
 						'id'=>'extension_title_italic',
 						'class'=>'checkbox',
-						'title'=>'标题斜体',
+						'title'=>'名称斜体',
 						'exchange'=>'title_italic',
 					),
 					array(
 						'id'=>'extension_title_strikethrough',
 						'class'=>'checkbox',
-						'title'=>'标题删除线',
+						'title'=>'名称删除线',
 						'exchange'=>'title_strikethrough',
 					),
 					array(
 						'id'=>'extension_title_color',
 						'class'=>'text',
-						'title'=>'标题颜色',
+						'title'=>'名称颜色',
 						'value'=>'#09C',
 						'exchange'=>'title_color',
 					),
 					array(
 						'id'=>'extension_url',
 						'class'=>'text',
-						'title'=>'文章链接',
+						'title'=>'扩展链接',
 						'exchange'=>'url',
 					),
 					array(
@@ -81,8 +74,8 @@ class CreateExtension extends ControlPanel
 					array(
 						'id'=>'extension_img',    //文件控件bean设置的例子
 						'class'=>'file',
-						'folder'=>Extension::flyweight('extension')->filesFolder()->path(),  //取得扩展专用的文件保存路径,作为文件上传控件初始化的参数之一,这样控件就会知道应该把文件放在服务器的哪个文件夹下
-						'title'=>'文章图片',
+						'folder'=>Extension::flyweight('extensionstore')->filesFolder()->path(),  //取得扩展专用的文件保存路径,作为文件上传控件初始化的参数之一,这样控件就会知道应该把文件放在服务器的哪个文件夹下
+						'title'=>'扩展图片',
 					)*/
 				),
 			),
@@ -91,8 +84,8 @@ class CreateExtension extends ControlPanel
 				'orm'=>array(
 					'table'=>'extension',
 					'hasMany:attachments' => array (
-						'fromkeys' => array ( 'aid',),
-						'tokeys' => array ( 'aid', ),
+						'fromkeys' => array ( 'eid',),
+						'tokeys' => array ( 'eid', ),
 						'table' => 'attachment',
 					)
 				),
@@ -112,12 +105,12 @@ class CreateExtension extends ControlPanel
 	public function process()
 	{
 		//权限
-		$this->requirePurview('purview:admin_category','extension',$this->view->widget('extension_cat')->value(),'您没有这个分类的管理权限,无法继续浏览');
+		$this->requirePurview('purview:admin_category','extensionstore',$this->view->widget('extension_cat')->value(),'您没有这个分类的管理权限,无法继续浏览');
 		
 		//为分类select添加option
 		$aCatSelectWidget = $this->view->widget("extension_cat");
 		
-		$aCatSelectWidget->addOption("文章分类...",null,true);
+		$aCatSelectWidget->addOption("扩展分类...",null,true);
 		
 		$this->categoryTree->load();
 		
@@ -128,8 +121,8 @@ class CreateExtension extends ControlPanel
 			$aCatSelectWidget->addOption(str_repeat("--", Category::depth($aCat)).$aCat->title,$aCat->cid,false);
 		}
 		
-		$this->view->variables()->set('page_h1',"新建文章") ;
-		$this->view->variables()->set('save_button',"发布文章") ;
+		$this->view->variables()->set('page_h1',"新建扩展") ;
+		$this->view->variables()->set('save_button',"发布扩展") ;
 		
 		$this->doActions();
 	}
@@ -156,7 +149,7 @@ class CreateExtension extends ControlPanel
 			{
 				$arrExtensionFilesList = array();
 			}
-			$aStoreFolder = Extension::flyweight('extension')->FilesFolder();
+			$aStoreFolder = Extension::flyweight('extensionstore')->FilesFolder();
 			$aAchiveStrategy = DateAchiveStrategy::flyweight ( Array (true, true, true ) );
 				
 			$aAttachmentsModel = $this->extension->child('attachments');
@@ -224,11 +217,11 @@ class CreateExtension extends ControlPanel
 		if ($this->extension->save ())
 		{
 			// 					$this->view->hideForm ();
-			$this->messageQueue ()->create ( Message::success, "文章保存成功" );
+			$this->messageQueue ()->create ( Message::success, "扩展保存成功" );
 		}
 		else
 		{
-			$this->messageQueue ()->create ( Message::error, "文章保存失败" );
+			$this->messageQueue ()->create ( Message::error, "扩展保存失败" );
 		}
 	}
 }

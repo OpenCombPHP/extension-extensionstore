@@ -2,6 +2,9 @@
 namespace org\opencomb\extensionstore\category;
 
 use org\jecat\framework\mvc\model\Model;
+
+use org\opencomb\extensionstore\OpenCMS;
+
 use org\jecat\framework\mvc\model\db\Category;
 use org\jecat\framework\mvc\view\DataExchanger;
 use org\jecat\framework\message\Message;
@@ -30,30 +33,30 @@ class CategorySort extends ControlPanel
 		{
 			$sTo = $this->params->get ( 'to' );   //up or down
 		}else{
-			$this->messageQueue ()->create ( Message::error, "缺少信息,栏目排序失败" );
+			$this->messageQueue ()->create ( Message::error, "缺少信息,类型排序失败" );
 			return;
 		}
 		
-		//被移动的栏目的cid
-		if ($this->params->has ( 'eid' ))
+		//被移动的类型的cid
+		if ($this->params->has ( 'cid' ))
 		{
-			$nCid = ( int ) $this->params->get ( 'eid' );
+			$nCid = ( int ) $this->params->get ( 'cid' );
 		}else{
-			$this->messageQueue ()->create ( Message::error, "缺少信息,栏目排序失败" );
+			$this->messageQueue ()->create ( Message::error, "缺少信息,类型排序失败" );
 			return;
 		}
 		
 		//权限
-		$this->requirePurview('purview:admin_category','extension',$nCid,'您没有这个分类的管理权限,无法继续浏览');
+		$this->requirePurview('purview:admin_category','extensionstore',$nCid,'您没有这个分类的管理权限,无法继续浏览');
 		
 		//准备分类信息
 		$this->categoryTree->load();
 		
 		Category::buildTree($this->categoryTree);
 		
-		$aHandleCategoryModel = $this->categoryTree->findChildBy($nCid,'eid');
+		$aHandleCategoryModel = $this->categoryTree->findChildBy($nCid,'cid');
 		if(!$aHandleCategoryModel){
-			$this->messageQueue ()->create ( Message::error, "没有找到对应的栏目,栏目排序失败" );
+			$this->messageQueue ()->create ( Message::error, "没有找到对应的类型,类型排序失败" );
 			return;
 		}
 		
@@ -90,10 +93,10 @@ class CategorySort extends ControlPanel
 		}else if($sTo == "down" && $aRightBrother){
 			$aHandleCategory->insertCategoryToPoint((int)$aRightBrother->rgt + 1);
 		}else{
-			$this->messageQueue ()->create ( Message::error, "此栏目不能再移动" );
+			$this->messageQueue ()->create ( Message::error, "此类型不能再移动" );
 			return;
 		}
-		$this->messageQueue ()->create ( Message::success, "栏目排序成功" );
+		$this->messageQueue ()->create ( Message::success, "类型排序成功" );
 	}
 	
 	/**

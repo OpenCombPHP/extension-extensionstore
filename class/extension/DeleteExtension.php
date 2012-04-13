@@ -2,7 +2,6 @@
 namespace org\opencomb\extensionstore\extension;
 
 use org\opencomb\platform\ext\Extension;
-use org\jecat\framework\mvc\model\db\Extension;
 use org\jecat\framework\mvc\view\DataExchanger;
 use org\jecat\framework\message\Message;
 use org\opencomb\coresystem\mvc\controller\ControlPanel;
@@ -12,7 +11,7 @@ class DeleteExtension extends ControlPanel
 	public function createBeanConfig()
 	{
 		return array(
-			'title'=>'删除文章',
+			'title'=>'删除扩展',
 			'view'=>array(
 				'template'=>'DeleteExtension.html',
 				'class'=>'view'
@@ -24,8 +23,8 @@ class DeleteExtension extends ControlPanel
 					'table'=>'extension',
 					'limit'=>-1,
 					'hasMany:attachments' => array (
-							'fromkeys' => array ( 'aid',),
-							'tokeys' => array ( 'aid', ),
+							'fromkeys' => array ( 'eid',),
+							'tokeys' => array ( 'eid', ),
 							'table' => 'attachment',
 					)
 				)
@@ -36,14 +35,14 @@ class DeleteExtension extends ControlPanel
 	public function process()
 	{
 		//权限
-		$this->requirePurview('purview:admin_category','extension',$this->extension->cid,'您没有这个分类的管理权限,无法继续浏览');
+		$this->requirePurview('purview:admin_category','extensionstore',$this->extension->cid,'您没有这个分类的管理权限,无法继续浏览');
 		
 		//要删除哪些项?把这些项数组一起删除,如果只有一项,也把也要保证它是数组
-		if ($this->params->get ( "aid" ))
+		if ($this->params->get ( "eid" ))
 		{
-			$arrAids = explode(',', $this->params->get ( "aid" ));
-			$sSql = 'aid in ( ';
-			foreach($arrAids as $nKey=>$sValue)
+			$arrEids = explode(',', $this->params->get ( "eid" ));
+			$sSql = 'eid in ( ';
+			foreach($arrEids as $nKey=>$sValue)
 			{
 				if($nKey)
 				{
@@ -53,7 +52,7 @@ class DeleteExtension extends ControlPanel
 			}
 			$sSql.=  " )";
 			
-			$this->extension->loadSql ( $sSql , $arrAids);
+			$this->extension->loadSql ( $sSql , $arrEids);
 			
 			//删除附件
 			$arrFilePaths = array();
@@ -65,17 +64,17 @@ class DeleteExtension extends ControlPanel
 			if ($this->extension->delete ())
 			{
 				$this->deleteAttachments($arrFilePaths);
-				$this->messageQueue ()->create ( Message::success, "删除文章成功" );
+				$this->messageQueue ()->create ( Message::success, "删除扩展成功" );
 			}
 			else
 			{
-				$this->messageQueue ()->create ( Message::error, "删除文章失败" );
+				$this->messageQueue ()->create ( Message::error, "删除扩展失败" );
 			}
 		}else{
-			$this->messageQueue ()->create ( Message::error, "未指定文章" );
+			$this->messageQueue ()->create ( Message::error, "未指定扩展" );
 		}
 		
-		$this->location('/?c=org.opencomb.extension.extension.ExtensionManage');
+		$this->location('/?c=org.opencomb.extensionstore.extension.ExtensionManage');
 	}
 	
 	/**
@@ -85,7 +84,7 @@ class DeleteExtension extends ControlPanel
 	 * 
 	 * @return boolean 如果有一个文件删除失败就返回false
 	 */
-	static public function deleteAttachments(array $arrFilePaths , $sExtension = 'extension'){
+	static public function deleteAttachments(array $arrFilePaths , $sExtension = 'extensionstore'){
 		if(!$arrFilePaths)
 		{
 			return true;

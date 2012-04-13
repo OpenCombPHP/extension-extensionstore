@@ -41,8 +41,8 @@ class TopList extends Controller
 					'table'=>'extension',
 					'limit'=>20,
 					'hasOne:category'=>array(
-						'fromkeys'=>'eid',
-						'tokeys'=>'eid',
+						'fromkeys'=>'cid',
+						'tokeys'=>'cid',
 						'columns' => array('title') ,
 						'table'=>'category',
 					) ,
@@ -52,10 +52,10 @@ class TopList extends Controller
 		
 		//排序,默认按照时间反序排列
 		$sOrder = 'orderDesc';
-		$this->setTitle("最新文章");
+		$this->setTitle("最新扩展");
 		if($this->params->has('order') and $this->params->get('order') == "asc"){
 			$sOrder = 'orderAsc';
-			$this->setTitle("最热文章");
+			$this->setTitle("最热扩展");
 		}
 		$arrBean['model:extensions']['orm'][$sOrder] = 'createTime' ;
 		
@@ -69,22 +69,22 @@ class TopList extends Controller
 	
 	public function process()
 	{
-		if(!$this->params->has("eid")){
+		if(!$this->params->has("cid")){
 			$this->messageQueue ()->create ( Message::error, "未指定分类" );
 			return;
 		}
 		
 		//准备分类信息
-		if(!$this->category->load(array($this->params->get("eid")),array('eid'))){
+		if(!$this->category->load(array($this->params->get("cid")),array('cid'))){
 			$this->messageQueue ()->create ( Message::error, "无效的分类编号" );
 		}
 		$this->view->variables()->set('sCategoryTitle',$this->category->data('title')) ;
-		$this->view->variables()->set('nCid',$this->params->get("eid")) ;
+		$this->view->variables()->set('nCid',$this->params->get("cid")) ;
 				
 		//遍历范围,仅第一层
 		if($this->params->has('subCat') and $this->params->get('subCat') == 1)
 		{
-			$this->extensions->loadSql("`cid`=@1",$this->params->get('eid')) ;
+			$this->extensions->loadSql("`cid`=@1",$this->params->get('cid')) ;
 		}
 		
 		//遍历范围,所有层

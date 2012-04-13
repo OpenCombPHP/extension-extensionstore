@@ -36,14 +36,14 @@ class DeleteCategory extends ControlPanel
 	public function process()
 	{
 		//权限
-		$this->requirePurview('purview:admin_category','extension',$this->params->get('eid'),'您没有这个分类的管理权限,无法继续浏览');
+		$this->requirePurview('purview:admin_category','extensionstore',$this->params->get('cid'),'您没有这个分类的管理权限,无法继续浏览');
 		
 		//要删除哪些项?把这些项数组一起删除,如果只有一项,也把也要保证它是数组
-		if ($this->params->get ( "eid" ))
+		if ($this->params->get ( "cid" ))
 		{
-			$arrToDelete = explode(',', $this->params->get ( "eid" )); 
+			$arrToDelete = explode(',', $this->params->get ( "cid" )); 
 			if($arrToDelete === false){
-				$this->messageQueue ()->create ( Message::error, "未指定栏目" );
+				$this->messageQueue ()->create ( Message::error, "未指定类型" );
 			}
 			
 			foreach($arrToDelete as $nCatIdToDelete){
@@ -51,34 +51,34 @@ class DeleteCategory extends ControlPanel
 			}
 			
 		}else{
-			$this->messageQueue ()->create ( Message::error, "未指定栏目" );
+			$this->messageQueue ()->create ( Message::error, "未指定类型" );
 		}
 		
-		$this->location('/?c=org.opencomb.extension.category.CategoryManage');
+		$this->location('/?c=org.opencomb.extensionstore.category.CategoryManage');
 	}
 	
 	public function delCat($nCatIdToDelete)
 	{
-		if ($this->category->load( (int)$nCatIdToDelete , 'eid'))
+		if ($this->category->load( (int)$nCatIdToDelete , 'cid'))
 		{
-			//保证正在删除的分类没有文章
-			if($this->extension->load (array($this->category->data('eid')),array('eid'))){
-				$this->messageQueue ()->create ( Message::error, "栏目中有文章,请先转移文章再删除栏目" );
+			//保证正在删除的分类没有扩展
+			if($this->extension->load (array($this->category->data('cid')),array('cid'))){
+				$this->messageQueue ()->create ( Message::error, "类型中有扩展,请先转移扩展再删除类型" );
 				return;
 			}
 		
 			//保证正在删除的分类没有子分类
 			if(Category::rightPoint($this->category) - Category::leftPoint($this->category) > 1){
-				$this->messageQueue ()->create ( Message::error, "栏目中有子栏目,请先转移子栏目再试" );
+				$this->messageQueue ()->create ( Message::error, "类型中有子类型,请先转移子类型再试" );
 				return;
 			}
 			$aCategory = new Category($this->category);
 			$aCategory->delete();
-			$this->messageQueue ()->create ( Message::success, "删除栏目成功" );
+			$this->messageQueue ()->create ( Message::success, "删除类型成功" );
 		}
 		else
 		{
-			$this->messageQueue ()->create ( Message::error, "删除栏目失败" );
+			$this->messageQueue ()->create ( Message::error, "删除类型失败" );
 		}
 	}
 }

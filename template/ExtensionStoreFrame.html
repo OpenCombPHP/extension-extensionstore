@@ -1,0 +1,11 @@
+<div class="cms_left">
+	<a href="/">首页</a>
+	<foreach for='$arrBreadcrumbNavigation' key='sKey' item='sItem'>
+		>> <a href="{=$sItem}">{=$sKey}</a>
+	</foreach>
+	<views />
+</div>
+<div class="cms_sidebar">
+	<view name="topListNew" />
+	<view name="topListHot" />
+</div>

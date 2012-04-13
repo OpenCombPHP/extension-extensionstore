@@ -13,7 +13,7 @@ class ExtensionContent extends Controller
 	public function createBeanConfig()
 	{
 		return array(
-			'title'=> '文章内容',
+			'title'=> '扩展内容',
 			'view'=>array(
 				'template'=>'ExtensionContent.html',
 				'class'=>'view',
@@ -24,8 +24,8 @@ class ExtensionContent extends Controller
 				'orm'=>array(
 					'table'=>'extension',
 					'hasMany:attachments' => array (
-						'fromkeys' => array ( 'aid' ),
-						'tokeys' => array ( 'aid' ),
+						'fromkeys' => array ( 'eid' ),
+						'tokeys' => array ( 'eid' ),
 						'table' => 'attachment',
 						'orderby' => 'index'
 					)
@@ -36,14 +36,14 @@ class ExtensionContent extends Controller
 	
 	public function process()
 	{
-		if($this->params->has("aid"))
+		if($this->params->has("eid"))
 		{
-			if(!$this->extension->load(array($this->params->get("aid")),array('aid')))
+			if(!$this->extension->load(array($this->params->get("eid")),array('eid')))
 			{
-				$this->messageQueue ()->create ( Message::error, "错误的文章编号" );
+				$this->messageQueue ()->create ( Message::error, "错误的扩展编号" );
 			}
 		}else{
-			$this->messageQueue ()->create ( Message::error, "未指定文章" );
+			$this->messageQueue ()->create ( Message::error, "未指定扩展" );
 		}
 		//浏览次数
 		$this->extension->setData( "views",(int)$this->extension->data("views") + 1 );
@@ -54,17 +54,17 @@ class ExtensionContent extends Controller
 		$this->setTitle($this->extension->title);
 		
 		//把cid传给frame
-		$this->frame()->params()->set('eid',$this->extension->cid);
+		$this->frame()->params()->set('cid',$this->extension->cid);
 	}
 	
 	public function defaultFrameConfig()
 	{
-		return array('class'=>'org\\opencomb\\extension\\frame\\ExtensionFrontFrame') ;
+		return array('class'=>'org\\opencomb\\extensionstore\\frame\\ExtensionFrontFrame') ;
 	}
 	
 	static public function getHttpUrl($sFilePath)
 	{
-		return Extension::flyweight('extension')->FilesFolder()->httpUrl() . $sFilePath;
+		return Extension::flyweight('extensionstore')->FilesFolder()->httpUrl() . $sFilePath;
 	}
 	
 	static public function getContentWithAttachmentUrl( $sContent , $aAttachmentModel )

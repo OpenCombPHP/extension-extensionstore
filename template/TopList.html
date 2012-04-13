@@ -1,7 +1,7 @@
 <lib name='jquery.threedots' />
 <div class='topList'>
 	<msgqueue for="$theController->messageQueue()" />
-	<a href="?c=org.opencomb.opencms.extension.ExtensionList&cid={=$nCid}" class="frontframe-more">更多</a>
+	<a href="?c=org.opencomb.extensionstore.extension.ExtensionList&cid={=$nCid}" class="frontframe-more">更多</a>
 	<h3>{=$sCategoryTitle}</h3>
 	<ul>
 		<model:foreach>
@@ -13,7 +13,7 @@
 				$sStyle.=$theModel['title_italic']==1 ? 'font-style: italic;' : '';
 				$sStyle.=$theModel['title_strikethrough']==1 ? 'text-decoration:line-through;' : '';
 				$sStyle.=$theModel['title_color']!='' ? 'color:'.$theModel['title_color'].';' : '';
-				$sUrl= empty($theModel['url']) ? "?c=org.opencomb.opencms.extension.ExtensionContent&aid={$theModel['aid']}" : $theModel['url'];
+				$sUrl= empty($theModel['url']) ? "?c=org.opencomb.extensionstore.extension.ExtensionContent&eid={$theModel['eid']}" : $theModel['url'];
 			#}
 			<a class='ellipsis_text' href='{=$sUrl}' style='{=$sStyle}'>{=$theModel['title']}</a>
 		</li>
@@ -21,7 +21,7 @@
 		<li class='block'></li>
 	</ul>
 </div>
-<!-- <script src='extensions/opencms/0.1/public/js/topListShortTitle.js' ></script> -->
+<!-- <script src='extensions/extensionstore/0.1/public/js/topListShortTitle.js' ></script> -->
 <script>
 jQuery(function(){
 	jQuery('.shorttext_{=$nCid}').ThreeDots({max_rows:1,alt_text_t:true,ellipsis_string:''});

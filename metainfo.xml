@@ -11,4 +11,6 @@
 	
 	<template folder="/template" />
 	
+	<beanFolder folder="/bean" />
+	
 </Extension>

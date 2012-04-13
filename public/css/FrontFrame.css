@@ -1,0 +1,54 @@
+body{ background:#F6F8F7;font:12px "微软雅黑","宋体"; color:#333; }
+
+a{color:#09c; text-decoration:none}
+a:hover{ text-decoration:underline; -moz-transition: all 0.1s linear;-webkit-transition: all 0.5s linear ; color:#066585}
+
+
+h2{ font-size:14px; font-weight:bold; color:#333}
+h3{ font-size:13px; font-weight:bold; color:#333}
+h4{ font-size:12px; font-weight:bold; color:#333}
+
+
+
+/*头部*/
+.frontframe-header{ width:100%; height:80px; background:url(../images/black.gif) repeat-x 0 -5px; }
+	.frontframe-logo{width:220px; height:45px; background:url(../images/logo.jpg) no-repeat 0 0; display:block;clear:both; float:left; overflow:hidden; text-indent:-9999em;margin-left:10px;}
+	.frontframe-othernav{ float:right;margin:10px 10px 8px 0}
+
+
+
+
+
+
+/*内容外围*/
+.frontframe-main{min-height:1000px; width:100%;}
+/*内容内部*/
+.frontframe-main-inner{ padding:10px;}
+	.frontframe-mainnav{ height:30px; background:url(../images/line.gif) repeat-x 0 bottom; padding:5px 0;margin-bottom:10px;}
+		.frontframe-slogan{width:220px; height:30px; background:url(../images/slogan.gif) no-repeat right 0; float:left}
+		.jc-widget-menu-depth-1{margin-left:300px;}
+		.jc-widget-menu-item-depth-1{ float:left; font-size:14px; margin-right:20px;}
+		.jc-widget-menu-item-depth-1 a{color:#333; display:block; float:left; height:30px; padding:0 6px;border-bottom:3px solid #F6F8F7;}
+		.jc-widget-menu-item-depth-1 a:hover{border-bottom:3px solid #09c; text-decoration:none;}
+	
+	#view-wrapper-3{padding:10px 0;}
+		.topList{background:url(../images/viewbg.jpg) repeat-x 0 0; margin:0 10px 15px; padding:10px; border:1px solid #dfdfdf; border-radius:2px; box-shadow:0 0 4px rgba(0,0,0,0.1)}
+		.frontframe-more{float:right; font-weight:normal; font-size:12px}
+		.topList h3{background:url(../images/line.gif) repeat-x 0 bottom; padding-bottom:5px; margin-bottom:5px;}
+		.topList li{ line-height:24px;}
+		.topList li a{color:#666;}
+		.topList li span{ float:right; color:#999;}
+		
+/* 2012-2-15  cms_left & cms_sidebar */
+.cms_left{float:left; margin-right:406px; background:#fff; border:1px solid #dfdfdf; border-radius:2px; box-shadow:0 0 4px rgba(0,0,0,0.1);padding:10px;}
+.extensionList table{margin:10px 0;}
+.extensionList table th{ font-weight:bold; text-align:center; background:#eee;}
+.extensionList table td{padding:4px; vertical-align:top}
+.extension_time{width:160px; color:#999}
+
+.cms_sidebar{ float:left; margin-left:-400px; width:400px;}
+
+
+/*尾部*/
+.frontframe-footer{ width:100%; height:30px;padding:0 0 8px 0; background:url(../images/black.gif) repeat-x 0 bottom;}
+	.frontframe-footer p{padding:0 8px; text-align:right; color:#999; line-height:30px; background:url(../images/line.gif) repeat-x 0 0;}

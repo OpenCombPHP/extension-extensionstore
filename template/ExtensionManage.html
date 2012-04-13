@@ -6,16 +6,16 @@
 			<select id='art_cat_select'>
 				<option value='0'>全部</option>
 				<foreach for='$aCatIter' item="aCatModel">
-				<option value='{=$aCatModel['eid']}' {=$theParams->get('eid')==$aCatModel['eid'] ? "selected":''}>
+				<option value='{=$aCatModel['cid']}' {=$theParams->get('cid')==$aCatModel['cid'] ? "selected":''}>
 					{=str_repeat("-", \org\jecat\framework\mvc\model\db\Category::depth($aCatModel))}
 					{=$aCatModel['title']}
 				</option>
 				</foreach>
 			</select>
 			<input type='text' class='search_text' value="{=$theParams['title']}"/>
-			<a href='/?c=org.opencomb.opencms.extension.ExtensionManage&title=' class='search_button' title='依据扩展部分标题搜索扩展'>搜索</a>
+			<a href='/?c=org.opencomb.extensionstore.extension.ExtensionManage&title=' class='search_button' title='依据扩展部分名称搜索扩展'>搜索</a>
 		</div>
-		<a href='?c=org.opencomb.opencms.extension.CreateExtension'>+ 新建扩展</a>
+		<a href='?c=org.opencomb.extensionstore.extension.CreateExtension'>+ 新建扩展</a>
 	</div>
 	<script type="text/javascript">
 		function confirmDel(){
@@ -39,8 +39,8 @@
 		<tbody id="tableStyle">
 			<foreach for="$aArtIter" item="aArt">
 			<tr>
-				<td><input type="checkbox" class='art_select' value='{=$aArt["aid"]}'/></td>
-				<td>{=$aArt['aid']}</td>
+				<td><input type="checkbox" class='art_select' value='{=$aArt["eid"]}'/></td>
+				<td>{=$aArt['eid']}</td>
 				{#?
 					$sStyle = '';
 					$sStyle.=$aArt['title_bold']==1 ? 'font-weight: bold;' : '';
@@ -48,11 +48,11 @@
 					$sStyle.=$aArt['title_strikethrough']==1 ? 'text-decoration:line-through;' : '';
 					$sStyle.=$aArt['title_color']!='' ? 'color:'.$aArt['title_color'].';' : '';
 				#}
-				<td><a href="?c=org.opencomb.opencms.extension.ExtensionContent&aid={=$aArt['aid']}" style='{=$sStyle}'>{=$aArt['title']}</a></td>
-				<td><a href="?c=org.opencomb.opencms.extension.ExtensionManage&cid={=$aArt['eid']}">{=$aArt['category.title']}</a></td>
+				<td><a href="?c=org.opencomb.extensionstore.extension.ExtensionContent&eid={=$aArt['eid']}" style='{=$sStyle}'>{=$aArt['title']}</a></td>
+				<td><a href="?c=org.opencomb.extensionstore.extension.ExtensionManage&cid={=$aArt['cid']}">{=$aArt['category.title']}</a></td>
 				<td>{=$aArt['views']}</td>
-				<td><a href="?c=org.opencomb.opencms.extension.EditExtension&aid={=$aArt['aid']}">编辑</a></td>
-				<td><a href="?c=org.opencomb.opencms.extension.DeleteExtension&aid={=$aArt['aid']}" onclick="javascript:return confirmDel();">删除</a></td>
+				<td><a href="?c=org.opencomb.extensionstore.extension.EditExtension&eid={=$aArt['eid']}">编辑</a></td>
+				<td><a href="?c=org.opencomb.extensionstore.extension.DeleteExtension&eid={=$aArt['eid']}" onclick="javascript:return confirmDel();">删除</a></td>
 			</tr>
 			</foreach>
 		</tbody>
@@ -60,7 +60,7 @@
 </div>
 
 <a href='#' class='select_all'>全选</a>/<a class='unselect_all' href='#'>反选</a>
-<a href='/?c=org.opencomb.opencms.extension.DeleteExtension&aid=' class='delete_extensions'>批量删除</a>
+<a href='/?c=org.opencomb.extensionstore.extension.DeleteExtension&eid=' class='delete_extensions'>批量删除</a>
 <widget id="paginator" attr.nums="10" attr.showFirst="1" attr.showLast="1" attr.showTotal="1" attr.showPre="1" attr.showNext="1" />
 
 
@@ -79,7 +79,7 @@
 	
 	//分类选择扩展
 	jquery('#art_cat_select').change(function(){
-		var href='/?c=org.opencomb.opencms.extension.ExtensionManage';
+		var href='/?c=org.opencomb.extensionstore.extension.ExtensionManage';
 		if(jquery(this).val() != '0')
 		{
 			href+="&cid=" + jquery(this).val();

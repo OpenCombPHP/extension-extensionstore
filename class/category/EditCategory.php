@@ -44,7 +44,7 @@ class EditCategory extends ControlPanel
 	public function process()
 	{
 		//权限
-		$this->requirePurview('purview:admin_category','extension',$this->params->get('eid'),'您没有这个分类的管理权限,无法继续浏览');
+		$this->requirePurview('purview:admin_category','extensionstore',$this->params->get('cid'),'您没有这个分类的管理权限,无法继续浏览');
 		
 		//准备分类信息
 		$this->categoryTree->load();
@@ -55,24 +55,24 @@ class EditCategory extends ControlPanel
 		$aCatSelectWidget->addOption("顶级分类",null,true);
 		foreach($this->categoryTree->childIterator() as $aCat)
 		{
-			if($this->params->get("eid") == $aCat->cid){
+			if($this->params->get("cid") == $aCat->cid){
 				//在选单中排除自己,以防把自己变成自己的子分类
 				continue;
 			}
 			$aCatSelectWidget->addOption(str_repeat("--", Category::depth($aCat)).$aCat->title,$aCat->cid.":".$aCat->rgt,false);
 		}
 		//还原数据
-		if($this->params->has("eid")){
-			$this->category->load(array($this->params->get("eid")),array("eid"));
+		if($this->params->has("cid")){
+			$this->category->load(array($this->params->get("cid")),array("cid"));
 			$aParentCategory = $this->parentCategory($this->category , $this->categoryTree);
 		}else{
-			$this->messageQueue ()->create ( Message::error, "未指定栏目" );
+			$this->messageQueue ()->create ( Message::error, "未指定类型" );
 			return;
 		}
 		
 		$this->setTitle($this->category->title . " - " . $this->title());
 		
-		$this->view->variables()->set('sPageTitle','编辑栏目') ;
+		$this->view->variables()->set('sPageTitle','编辑类型') ;
 		
 		$this->view->exchangeData ( DataExchanger::MODEL_TO_WIDGET);
 		//还原父分类选单的值,如果有父分类
@@ -103,11 +103,11 @@ class EditCategory extends ControlPanel
 		if ($this->category->save ())
 		{
 			// 					$this->view->hideForm ();
-			$this->messageQueue ()->create ( Message::success, "栏目保存成功" );
+			$this->messageQueue ()->create ( Message::success, "类型保存成功" );
 		}
 		else
 		{
-			$this->messageQueue ()->create ( Message::error, "栏目保存失败" );
+			$this->messageQueue ()->create ( Message::error, "类型保存失败" );
 		}
 		// 				DB::singleton()->executeLog();
 	}
