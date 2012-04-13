@@ -1,8 +1,14 @@
 <?php
 namespace org\opencomb\extensionstore\extension;
 
-use org\jecat\framework\fs\File;
+use org\jecat\framework\util\Version;
 
+use org\opencomb\platform\ext\ExtensionMetainfo;
+
+use org\jecat\framework\auth\IdManager;
+
+use org\opencomb\coresystem\mvc\controller\Controller;
+use org\jecat\framework\fs\File;
 use org\jecat\framework\fs\archive\DateAchiveStrategy;
 use org\jecat\framework\fs\Folder;
 use org\opencomb\platform\ext\Extension;
@@ -10,14 +16,13 @@ use org\jecat\framework\lang\Exception;
 use org\jecat\framework\mvc\model\db\Category;
 use org\jecat\framework\mvc\view\DataExchanger;
 use org\jecat\framework\message\Message;
-use org\opencomb\coresystem\mvc\controller\ControlPanel;
 
-class CreateExtension extends ControlPanel
+class CreateExtension extends Controller
 {
 	public function createBeanConfig()
 	{
 		return array(
-			'title'=>'新建扩展',
+			'title'=>'提交扩展',
 			'view'=>array(
 				'template'=>'ExtensionForm.html',
 				'class'=>'form',
@@ -59,12 +64,6 @@ class CreateExtension extends ControlPanel
 						'exchange'=>'title_color',
 					),
 					array(
-						'id'=>'extension_url',
-						'class'=>'text',
-						'title'=>'扩展链接',
-						'exchange'=>'url',
-					),
-					array(
 						'config'=>'widget/extension_cat'
 					),
 					array(
@@ -83,6 +82,7 @@ class CreateExtension extends ControlPanel
 				'class'=>'model',
 				'orm'=>array(
 					'table'=>'extension',
+// 					'keys'=>array('title','version_int','author'),
 					'hasMany:attachments' => array (
 						'fromkeys' => array ( 'eid',),
 						'tokeys' => array ( 'eid', ),
@@ -105,7 +105,7 @@ class CreateExtension extends ControlPanel
 	public function process()
 	{
 		//权限
-		$this->requirePurview('purview:admin_category','extensionstore',$this->view->widget('extension_cat')->value(),'您没有这个分类的管理权限,无法继续浏览');
+		$aId = $this->requireLogined();
 		
 		//为分类select添加option
 		$aCatSelectWidget = $this->view->widget("extension_cat");
@@ -121,7 +121,7 @@ class CreateExtension extends ControlPanel
 			$aCatSelectWidget->addOption(str_repeat("--", Category::depth($aCat)).$aCat->title,$aCat->cid,false);
 		}
 		
-		$this->view->variables()->set('page_h1',"新建扩展") ;
+		$this->view->variables()->set('page_h1',"提交扩展") ;
 		$this->view->variables()->set('save_button',"发布扩展") ;
 		
 		$this->doActions();
@@ -137,6 +137,8 @@ class CreateExtension extends ControlPanel
 
 		//记录创建时间
 		$this->extension->setData('createTime',time());
+		//记录作者
+		$this->extension->setData('author',IdManager::singleton()->currentUserId());
 
 		$this->view->exchangeData ( DataExchanger::WIDGET_TO_MODEL );
 
@@ -164,6 +166,28 @@ class CreateExtension extends ControlPanel
 				{
 					continue;
 				}
+				
+				if($sFileType != 'application/zip')
+				{
+					$this->messageQueue ()->create ( Message::error, "上传的文件不是zip类型" );
+					return;
+				}
+				
+				$xml = simplexml_load_file('zip://'.$sFileTempName."#metainfo.xml") ;
+				
+				$aExtMetainfo = ExtensionMetainfo::loadFromXML($xml);
+				$sExtensionVersionString = $aExtMetainfo->version();
+				$sExtensionName = $aExtMetainfo->name();
+				
+				if(!$sExtensionName || !$sExtensionVersionString){
+					$this->messageQueue ()->create ( Message::error, "metainfo不完整 , 缺少扩展名称或版本号" );
+				}
+				
+				$nVersionInt = Version::fromString($sExtensionVersionString);
+				
+				$this->extension->setData('version',$sExtensionVersionString);
+				$this->extension->setData('version_int',$nVersionInt);
+				$this->extension->setData('title',$sExtensionName);
 					
 				//移动文件
 				if (empty ( $aStoreFolder ))
@@ -205,23 +229,21 @@ class CreateExtension extends ControlPanel
 				$aNewFileModel->setData('storepath' , $sSavedFileRelativePath); //httpURL()
 				$aNewFileModel->setData('size' , $sFileSize );
 				$aNewFileModel->setData('type' , $sFileType );
-				$aNewFileModel->setData('index' , $arrIndexs[$nKey] );
-				if(!in_array((string)( $arrIndexs[$nKey]), $arrExtensionFilesList))
-				{
-					$aNewFileModel->setData('displayInList' , 0);
-				}
 			}
 		}
 		/*           end 处理附件             */
-
-		if ($this->extension->save ())
-		{
-			// 					$this->view->hideForm ();
-			$this->messageQueue ()->create ( Message::success, "扩展保存成功" );
-		}
-		else
-		{
-			$this->messageQueue ()->create ( Message::error, "扩展保存失败" );
+		try{
+			if ($this->extension->save ())
+			{
+				// 					$this->view->hideForm ();
+				$this->messageQueue ()->create ( Message::success, "扩展保存成功" );
+			}
+			else
+			{
+				$this->messageQueue ()->create ( Message::error, "扩展保存失败" );
+			}
+		}catch (Exception $e){
+			$this->messageQueue ()->create ( Message::error, "已存在此扩展" );
 		}
 	}
 }

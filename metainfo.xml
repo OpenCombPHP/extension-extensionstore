@@ -10,6 +10,7 @@
 	<publicFolder folder="/public" />
 	
 	<template folder="/template" />
+	<template folder="/template_coresystem"  for ='coresystem'/>
 	
 	<beanFolder folder="/bean" />
 	

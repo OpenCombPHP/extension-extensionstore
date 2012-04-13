@@ -1,0 +1,41 @@
+<css src="coresystem:css/reset.css" />
+<css src="extensionstore:css/FrontFrame.css" />
+<lib name='jquery'/>
+
+<div class="frontframe-header">
+	<p class="frontframe-othernav">
+	<if "$aId=\org\jecat\framework\auth\IdManager::singleton()->currentId()">
+		Hi, <widget new='namecard' attr.type='simple' attr.mine='1'/>
+		<if "\org\opencomb\coresystem\auth\PurviewQuery::singleton()->hasPurview($aId,\org\opencomb\coresystem\auth\Id::PLATFORM_ADMIN,'coresystem')">
+			| <a href="?c=control.panel">平台管理</a>
+			| <a href="?c=user.panel">设置</a>
+		</if>
+		| <a href="?c=logout">退出</a>
+	<else />
+		<a href="?c=login">登录</a>
+	</if>
+	</p>
+	<h1><a href="#" class="frontframe-logo">OpenComb</a></h1>
+</div>
+
+<div class="frontframe-main">
+	<div class="frontframe-main-inner">
+		<div class="frontframe-mainnav">
+		<div class="frontframe-slogan"></div>
+			<widget id="mainMenu" />
+		</div>
+		
+			<views />
+	</div>
+</div>
+
+<div class="frontframe-footer">
+	<p>Copyright 2010 Cando.All rights reserved.</p>
+</div>
+<script>
+jquery(function(){
+	jquery('.namecard_simple_card_id_select').change(function(){
+		window.location.href='/?c=org.opencomb.coresystem.user.SwichId&uid=' + jquery(this).val();
+	});
+});
+</script>

@@ -56,12 +56,6 @@ class EditExtension extends ControlPanel
 							'value'=>'#09C',
 							'exchange'=>'title_color',
 					),
-					array(
-							'id'=>'extension_url',
-							'class'=>'text',
-							'title'=>'扩展链接',
-							'exchange'=>'url',
-					),
 				)
 			),
 			'model:extension'=>array(

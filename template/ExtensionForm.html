@@ -10,19 +10,18 @@
 		<label>颜色: <widget id="extension_title_color"/></label> 
 		<div id='extension_color_selecter'></div>
 	</div>
-	<label><div class="coresystem-form-url"><span>扩展链接</span><widget id="extension_url" /></div></label>
 	<label><div class="coresystem-form-select"><span>所属分类</span><widget id="extension_cat" /></div></label>
 	<label><div class="coresystem-form-textarea"><!--<span>扩展内容</span>--><widget id="extension_content" /></div></label>
 	<if "$theModel->child('attachments')->childrenCount() > 0 and get_class($theController) == 'org\opencomb\extensionstore\extension\EditExtension'">
 		<div class='extension_exist_files_list'>
-			<span>已有附件:</span>
+			<span>已有扩展压缩包:</span>
 			<!-- 已上传文件的容器 -->
 			{?$nAttaMaxIndex=0}
 			<foreach for='$theModel->child("attachments")' item='aAttaModel'>
 				<div class='extension_exist_file'>
 					<a href='{=$theController->getAttachmentUrl($aAttaModel)}'>{=$aAttaModel['orginname']}</a>
 					{=$theController->getAttachmentSize($aAttaModel)}
-					<a href='#' class='extension_exist_files_into_content' index='{=$aAttaModel['index']}' title='将附件插入到文档中,如果是图片就当作插图显示,如果是文件就插入链接'>插入到扩展</a>
+					<a href='#' class='extension_exist_files_into_content' index='{=$aAttaModel['index']}' title='将附件插入到文档中,如果是图片就当作插图显示,如果是文件就插入链接'>插入到文章</a>
 					<label><input name='extension_exist_list[]' class='extension_exist_list' type='checkbox' value='{=$aAttaModel['index']}' {=$theController->getIsDisplayInList($aAttaModel)}/>显示在附件列表</label>
 					<label><input name='extension_exist_file_delete[]' class='extension_exist_files_delete' type='checkbox' value='{=$aAttaModel['index']}'/>删除此附件</label>
 				</div>
@@ -35,11 +34,10 @@
 	</if>
 	
 	<div class='extension_files_list'>
-		<span>新增附件:</span>
+		<span>扩展压缩包(zip):</span>
 		<!-- 上传新文件的容器 -->
 	</div>
 	
-	<input id='add_file' type="button" value="添加附件" />
 	<input id='extension_files_index' name='extension_files_index' type="hidden" />
 	<br/>
 	<input type='submit' value="{=$save_button}" class="coresystem-form-button" />
@@ -47,10 +45,7 @@
 
 <!-- 上传文件的部分,只是模板,js根据情况动态添加到容器中 -->
 <div class='extension_file_template' style='display:none'>
-	<input name='extension_files[]' class='extension_file_input' type='file' value="扩展附件" />
-	<a href='#' class='extension_files_into_content' index='1' title='将附件插入到文档中,如果是图片就当作插图显示,如果是文件就插入链接'>插入到扩展</a>
-	<label><input name="extension_list[]" class='extension_list' type='checkbox' value='1' checked/>显示在附件列表</label>
-	<a href='#' class='extension_files_delete'>删除</a>
+	<input name='extension_files[]' class='extension_file_input' type='file' value="扩展压缩包" />
 </div>
 <!-- end 上传文件的部分,只是模板 -->
 
@@ -65,15 +60,12 @@ jquery(function(){
 	var extension_file = jquery('.extension_file_template').clone();
 	extension_file.removeClass('extension_file_template').addClass('extension_file').css({'display':'block'});
 	
-	jquery('#add_file').click(function(){
-		var extension_file_clone = extension_file.clone();
-		extension_file_clone.find('.extension_list').val(file_num);
-		extension_file_clone.find('.extension_files_into_content').attr('index',file_num);
-		file_num++;
-		jquery('.extension_files_list').append(extension_file_clone);
-		serializeFilesIndex();
-	});
-	jquery('#add_file').click();//添加默认的一个文件上传框体
+	//添加默认的一个文件上传框体
+	var extension_file_clone = extension_file.clone();
+	extension_file_clone.find('.extension_list').val(file_num);
+	extension_file_clone.find('.extension_files_into_content').attr('index',file_num);
+	file_num++;
+	jquery('.extension_files_list').append(extension_file_clone);
 	serializeFilesIndex();
 	
 	//附件插入正文

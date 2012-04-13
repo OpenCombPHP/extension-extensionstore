@@ -17,7 +17,7 @@
 					$sStyle.=$theModel['title_italic']==1 ? 'font-style: italic;' : '';
 					$sStyle.=$theModel['title_strikethrough']==1 ? 'text-decoration:line-through;' : '';
 					$sStyle.=$theModel['title_color']!='' ? 'color:'.$theModel['title_color'].';' : '';
-					$sUrl= empty($theModel['url']) ? "/?c=org.opencomb.extensionstore.extension.ExtensionContent&eid={$theModel['eid']}" : $theModel['url'];
+					$sUrl= "/?c=org.opencomb.extensionstore.extension.ExtensionContent&eid={$theModel['eid']}" ;
 				#}
 					<a href="{=$sUrl}" style="{=$sStyle}">
 						<data>title</data>
