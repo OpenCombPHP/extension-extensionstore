@@ -1,17 +1,7 @@
 <h2>{=$page_h1}</h2>
 <msgqueue />
 <form method="post" enctype="multipart/form-data">
-	<div class="coresystem-form-title">
-		<span>扩展名称</span>
-		<widget id="extension_title" /> 
-		<widget id="extension_title_bold" /> 
-		<widget id="extension_title_italic" /> 
-		<widget id="extension_title_strikethrough" /> 
-		<label>颜色: <widget id="extension_title_color"/></label> 
-		<div id='extension_color_selecter'></div>
-	</div>
 	<label><div class="coresystem-form-select"><span>所属分类</span><widget id="extension_cat" /></div></label>
-	<label><div class="coresystem-form-textarea"><!--<span>扩展内容</span>--><widget id="extension_content" /></div></label>
 	<if "$theModel->child('attachments')->childrenCount() > 0 and get_class($theController) == 'org\opencomb\extensionstore\extension\EditExtension'">
 		<div class='extension_exist_files_list'>
 			<span>已有扩展压缩包:</span>
@@ -68,12 +58,6 @@ jquery(function(){
 	jquery('.extension_files_list').append(extension_file_clone);
 	serializeFilesIndex();
 	
-	//附件插入正文
-	jquery('.extension_files_into_content , .extension_exist_files_into_content').live('click',function(){
-		CKEDITOR.instances.extension_content.insertText('[attachment '+jquery(this).attr('index')+']');
-		return false;
-	});
-	
 	//删除新增附件(未上传)
 	jquery('.extension_files_delete').live('click',function(){
 		jquery(this).parents('.extension_file:first').remove();
@@ -89,19 +73,5 @@ jquery(function(){
 		
 		jquery('#extension_files_index').val(arrIndexs.join(','));
 	}
-	
-	//颜色选择器
-    jquery('#extension_color_selecter').farbtastic('#extension_title_color');
-	jquery('#extension_title_color').focusin(function(){
-		jquery('#extension_color_selecter')
-		.css({
-			'top':jquery(this).position().top + jquery(this).outerHeight(),
-			'left':jquery(this).position().left,
-		})
-		.show();
-	});
-	jquery('#extension_title_color').focusout(function(){
-		jquery('#extension_color_selecter').hide();
-	});
 });
 </script>

@@ -29,53 +29,8 @@ class CreateExtension extends Controller
 				'model'=>'extension',
 				'widgets'=>array(
 					array(
-						'id'=>'extension_title',
-						'class'=>'text',
-						'title'=>'扩展名称',
-						'exchange'=>'title',
-						'verifier:notempty'=>array(),
-						'verifier:length'=>array(
-								'min'=>2,
-								'max'=>255)
-					),
-					array(
-						'id'=>'extension_title_bold',
-						'class'=>'checkbox',
-						'title'=>'名称加粗',
-						'exchange'=>'title_bold',
-					),
-					array(
-						'id'=>'extension_title_italic',
-						'class'=>'checkbox',
-						'title'=>'名称斜体',
-						'exchange'=>'title_italic',
-					),
-					array(
-						'id'=>'extension_title_strikethrough',
-						'class'=>'checkbox',
-						'title'=>'名称删除线',
-						'exchange'=>'title_strikethrough',
-					),
-					array(
-						'id'=>'extension_title_color',
-						'class'=>'text',
-						'title'=>'名称颜色',
-						'value'=>'#09C',
-						'exchange'=>'title_color',
-					),
-					array(
 						'config'=>'widget/extension_cat'
 					),
-					array(
-						'config'=>'widget/extension_content'
-					),
-						/*
-					array(
-						'id'=>'extension_img',    //文件控件bean设置的例子
-						'class'=>'file',
-						'folder'=>Extension::flyweight('extensionstore')->filesFolder()->path(),  //取得扩展专用的文件保存路径,作为文件上传控件初始化的参数之一,这样控件就会知道应该把文件放在服务器的哪个文件夹下
-						'title'=>'扩展图片',
-					)*/
 				),
 			),
 			'model:extension'=>array(
@@ -164,7 +119,7 @@ class CreateExtension extends Controller
 				//文件是否上传成功
 				if( empty($sFileTempName) || empty($sFileType) || empty($sFileSize) )
 				{
-					continue;
+					return;
 				}
 				
 				if($sFileType != 'application/zip')
@@ -178,8 +133,9 @@ class CreateExtension extends Controller
 				$aExtMetainfo = ExtensionMetainfo::loadFromXML($xml);
 				$sExtensionVersionString = $aExtMetainfo->version();
 				$sExtensionName = $aExtMetainfo->name();
+				$sExtensionDec = $aExtMetainfo->description();
 				
-				if(!$sExtensionName || !$sExtensionVersionString){
+				if(!$sExtensionName || !$sExtensionVersionString || !$sExtensionDec){
 					$this->messageQueue ()->create ( Message::error, "metainfo不完整 , 缺少扩展名称或版本号" );
 				}
 				
@@ -188,6 +144,7 @@ class CreateExtension extends Controller
 				$this->extension->setData('version',$sExtensionVersionString);
 				$this->extension->setData('version_int',$nVersionInt);
 				$this->extension->setData('title',$sExtensionName);
+				$this->extension->setData('description',$sExtensionDec);
 					
 				//移动文件
 				if (empty ( $aStoreFolder ))

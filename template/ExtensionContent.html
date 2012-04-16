@@ -3,7 +3,7 @@
 	<h1 class="extension_title">{=$extension['title']}</h1>
 	<div class="extension_createTime">{=date("Y年m月d日 H:m:s", $extension['createTime'])}</div>
 	<div class="extension_content">
-		{=$theController->getContentWithAttachmentUrl($extension['text'] , $theModel->child("attachments"))}
+		{=$theController->getContentWithAttachmentUrl($extension['description'] , $theModel->child("attachments"))}
 	</div>
 	
 	<if '$theModel->child("attachments")->childrenCount() > 0 '>

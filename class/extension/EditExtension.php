@@ -23,38 +23,7 @@ class EditExtension extends ControlPanel
 				'model'=>'extension',
 				'widgets'=>array(
 					array(
-						'config'=>'widget/extension_title'
-					),
-					array(
 						'config'=>'widget/extension_cat'
-					),
-					array(
-						'config'=>'widget/extension_content'
-					),
-					array(
-							'id'=>'extension_title_bold',
-							'class'=>'checkbox',
-							'title'=>'名称加粗',
-							'exchange'=>'title_bold',
-					),
-					array(
-							'id'=>'extension_title_italic',
-							'class'=>'checkbox',
-							'title'=>'名称斜体',
-							'exchange'=>'title_italic',
-					),
-					array(
-							'id'=>'extension_title_strikethrough',
-							'class'=>'checkbox',
-							'title'=>'名称删除线',
-							'exchange'=>'title_strikethrough',
-					),
-					array(
-							'id'=>'extension_title_color',
-							'class'=>'text',
-							'title'=>'名称颜色',
-							'value'=>'#09C',
-							'exchange'=>'title_color',
 					),
 				)
 			),
