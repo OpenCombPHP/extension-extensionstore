@@ -49,12 +49,7 @@ class ExtensionFrontFrame extends FrontFrame
 	public function process(){
 		$this->category->load($this->params->get('cid'),'cid');
 		
-		$aWhere = clone $this->categoryList->prototype()->criteria()->where();
-		
-		$aWhere->le("lft",$this->category->data('lft'));
-		$aWhere->ge("rgt",$this->category->data('rgt'));
-		
-		$this->categoryList->load($aWhere);
+		$this->categoryList->loadSql("lft < @1 and rgt > @2"  , $this->category->data('lft') ,$this->category->data('rgt'));
 		
 		$arrBreadcrumbNavigation = array();
 		foreach($this->categoryList->childIterator() as $aCat){

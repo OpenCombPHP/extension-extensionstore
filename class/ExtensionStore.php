@@ -53,6 +53,6 @@ class ExtensionStore extends Extension
 		$arrMenus = $aSetting->item('/menu/mainmenu','mainmenu',array()) ;
 		
 		// 合并配置数组，增加菜单
-		BeanFactory::mergeConfig( $arrConfig['items'], $arrMenus ) ;
+		BeanFactory::mergeConfig( $arrConfig, $arrMenus ) ;
 	}
 }

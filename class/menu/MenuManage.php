@@ -58,7 +58,7 @@ class MenuManage extends ControlPanel
 		$arrMenus = array();
 		foreach( $this->params->get('cat') as $sCid => $arrMenu){
 			if(isset($arrMenu['mainmenu'])){
-				$arrMenus[ (int)$sCid ] = array(
+				$arrMenus[ 'item:'.(int)$sCid ] = array(
 						'title'=>$this->categoryTree->findChildBy($sCid,"cid")->data('title'),
 						'link'=>'?c=org.opencomb.extensionstore.extension.ExtensionList&cid='.$sCid ,
 				);
