@@ -15,46 +15,60 @@ class TopList extends Controller
 			'view'=>array(
 				'template'=>'TopList.html',
 				'class'=>'view',
-				'model'=>'extension',
+				'model'=>'extensions',
 			),
-			'model:extension'=>array(
-				'list'=>true,
+			'model:category'=>array(
 				'orm'=>array(
-					//'where'=>array(array('eq','cid',$this->params->get('cid'))),
-					'table'=>'extension',
+					'columns' => array('title','lft','rgt') ,
+					'table'=>'category',
 				)
 			),
 		);
+		
+		//遍历范围,仅第一层
+		if($this->params->has('subCat') and $this->params->get('subCat') == 1){
+			$arrBean['model:extensions'] = array(
+				'list'=>true,
+				'orm'=>array(
+					'table'=>'extension',
+					'limit'=>20
+				)
+			);
+		}else{  //遍历范围,所有层
+			$arrBean['model:extensions'] = array(
+				'list'=>true,
+				'orm'=>array(
+					'table'=>'extension',
+					'limit'=>20,
+					'hasOne:category'=>array(
+						'fromkeys'=>'cid',
+						'tokeys'=>'cid',
+						'columns' => array('title') ,
+						'table'=>'category',
+					) ,
+				)
+			); 
+		}
+		
+		//排序,默认按照时间反序排列
+		$sOrder = 'orderDesc';
+		$this->setTitle("最新扩展");
+		if($this->params->has('order') and $this->params->get('order') == "asc"){
+			$sOrder = 'orderAsc';
+			$this->setTitle("最热扩展");
+		}
+		$arrBean['model:extensions']['orm'][$sOrder] = 'createTime' ;
+		
+		//排序
+		if($this->params->has("limit")){
+			$arrBean['model:extensions']['orm']['limit'] = $this->params->get("limit");
+		}
+		
 		return $arrBean;
 	}
 	
 	public function process()
 	{
-		//exit;
-		$this->extension->load($this->params->get("cid"),'cid') ;
-		//first是第一个数组，将model中所有行集合成一个数组
-		$arrModelFirst=array();
-		foreach($this->extension->childIterator() as $key=>$aModel)
-		{
-			$arrModelFirst[$key]=array('eid'=>$aModel->data('eid'),'from'=>$aModel->data('from'),'cid'=>$aModel->data('cid')
-								,'title'=>$aModel->data('title'),'description'=>$aModel->data('description')
-								,'createtime'=>$aModel->data('createTime'),'version'=>$aModel->data('version')
-								,'version_init'=>$aModel->data('version_init'),'author'=>$aModel->data('author')
-								,'views'=>$aModel->data('views'),'recommend'=>$aModel->data('recommend')
-								,'title_bold'=>$aModel->data('title_bold'),'title_italic'=>$aModel->data('title_italic')
-								,'title_strikethrough'=>$aModel->data('title_strikethrough'),'title_color'=>$aModel->data('title_color')
-								);
-		}
-// 		for($i=0;$i<count($arrModelFirst);$i++)
-// 		{
-// 			$arrModelSecond[]
-// 			for($i=0;$i<count($arrModelFirst);$i++)
-// 			{
-// 				;
-// 			}
-// 		}
-// 		var_dump($arrModelFirst);exit;
-		
 		if(!$this->params->has("cid")){
 			$this->messageQueue ()->create ( Message::error, "未指定分类" );
 			return;
@@ -84,7 +98,5 @@ class TopList extends Controller
 					,$this->category->rgt
 			) ;
 		}
-		//$this->extensions->printStruct();exit;
-		
 	}
 }

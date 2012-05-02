@@ -1,77 +1,14 @@
 <h2>{=$page_h1}</h2>
 <msgqueue />
 <form method="post" enctype="multipart/form-data">
-	<label><div class="coresystem-form-select"><span>所属分类</span><widget id="extension_cat" /></div></label>
-	<if "$theModel->child('attachments')->childrenCount() > 0 and get_class($theController) == 'org\opencomb\extensionstore\extension\EditExtension'">
-		<div class='extension_exist_files_list'>
-			<span>已有扩展压缩包:</span>
-			<!-- 已上传文件的容器 -->
-			{?$nAttaMaxIndex=0}
-			<foreach for='$theModel->child("attachments")' item='aAttaModel'>
-				<div class='extension_exist_file'>
-					<a href='{=$theController->getAttachmentUrl($aAttaModel)}'>{=$aAttaModel['orginname']}</a>
-					{=$theController->getAttachmentSize($aAttaModel)}
-					<a href='#' class='extension_exist_files_into_content' index='{=$aAttaModel['index']}' title='将附件插入到文档中,如果是图片就当作插图显示,如果是文件就插入链接'>插入到文章</a>
-					<label><input name='extension_exist_list[]' class='extension_exist_list' type='checkbox' value='{=$aAttaModel['index']}' {=$theController->getIsDisplayInList($aAttaModel)}/>显示在附件列表</label>
-					<label><input name='extension_exist_file_delete[]' class='extension_exist_files_delete' type='checkbox' value='{=$aAttaModel['index']}'/>删除此附件</label>
-				</div>
-				{?$nAttaMaxIndex = $aAttaModel['index']} 
-			</foreach>
-			<script>
-				file_num = {=$nAttaMaxIndex+1};
-			</script>
-		</div>
-	</if>
-	
 	<div class='extension_files_list'>
 		<span>扩展压缩包(zip):</span>
 		<!-- 上传新文件的容器 -->
 	</div>
-	
-	<input id='extension_files_index' name='extension_files_index' type="hidden" />
+	<br/>
+	<div class='extension_file_template' >
+	<input name='extension_files' class='extension_file_input' type='file' value="扩展压缩包" />
+	</div>
 	<br/>
 	<input type='submit' value="{=$save_button}" class="coresystem-form-button" />
 </form>
-
-<!-- 上传文件的部分,只是模板,js根据情况动态添加到容器中 -->
-<div class='extension_file_template' style='display:none'>
-	<input name='extension_files[]' class='extension_file_input' type='file' value="扩展压缩包" />
-</div>
-<!-- end 上传文件的部分,只是模板 -->
-
-<lib name='jquery'/>
-<lib name='jquery.farbtastic'/>
-<script>
-jquery(function(){
-	//动态增加传文件框体
-	if(typeof file_num == 'undefined'){
-		file_num = 1; //附件计数
-	}
-	var extension_file = jquery('.extension_file_template').clone();
-	extension_file.removeClass('extension_file_template').addClass('extension_file').css({'display':'block'});
-	
-	//添加默认的一个文件上传框体
-	var extension_file_clone = extension_file.clone();
-	extension_file_clone.find('.extension_list').val(file_num);
-	extension_file_clone.find('.extension_files_into_content').attr('index',file_num);
-	file_num++;
-	jquery('.extension_files_list').append(extension_file_clone);
-	serializeFilesIndex();
-	
-	//删除新增附件(未上传)
-	jquery('.extension_files_delete').live('click',function(){
-		jquery(this).parents('.extension_file:first').remove();
-		serializeFilesIndex();
-		return false;
-	});
-	
-	function serializeFilesIndex(){
-		var arrIndexs = new Array();
-		jquery('.extension_file').each(function(b,v){
-			arrIndexs.push(jquery(v).find('.extension_files_into_content').attr('index'));
-		});
-		
-		jquery('#extension_files_index').val(arrIndexs.join(','));
-	}
-});
-</script>

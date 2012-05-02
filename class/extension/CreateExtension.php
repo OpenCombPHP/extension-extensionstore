@@ -2,6 +2,7 @@
 namespace org\opencomb\extensionstore\extension;
 
 use org\jecat\framework\util\Version;
+use org\jecat\framework\util\VersionScope;
 
 use org\opencomb\platform\ext\ExtensionMetainfo;
 
@@ -21,6 +22,7 @@ class CreateExtension extends Controller
 {
 	public function createBeanConfig()
 	{
+		$this->setCatchOutput(false) ;
 		return array(
 			'title'=>'提交扩展',
 			'view'=>array(
@@ -37,21 +39,19 @@ class CreateExtension extends Controller
 				'class'=>'model',
 				'orm'=>array(
 					'table'=>'extension',
-// 					'keys'=>array('title','version_int','author'),
-					'hasMany:attachments' => array (
-						'fromkeys' => array ( 'eid',),
-						'tokeys' => array ( 'eid', ),
-						'table' => 'attachment',
+					'hasMany:dependence' => array (
+						'fromkeys' => array ( 'ext_name','ext_version_int'),
+						'tokeys' => array ( 'ext_name','ext_version_int'),
+						'table' => 'dependence',
 					)
 				),
 			),
-			'model:categoryTree'=>array(
+			'model:dependence'=>array(
 				'class'=>'model',
 				'list'=>true,
 				'orm'=>array(
-					'limit'=>-1,
-					'table'=>'category',
-					'name'=>'category',
+						'limit'=>20,
+						'table'=>'dependence',
 				),
 			),
 		);
@@ -62,20 +62,6 @@ class CreateExtension extends Controller
 		//权限
 		$aId = $this->requireLogined();
 		
-		//为分类select添加option
-		$aCatSelectWidget = $this->view->widget("extension_cat");
-		
-		$aCatSelectWidget->addOption("扩展分类...",null,true);
-		
-		$this->categoryTree->load();
-		
-		Category::buildTree($this->categoryTree);
-		
-		foreach($this->categoryTree->childIterator() as $aCat)
-		{
-			$aCatSelectWidget->addOption(str_repeat("--", Category::depth($aCat)).$aCat->title,$aCat->cid,false);
-		}
-		
 		$this->view->variables()->set('page_h1',"提交扩展") ;
 		$this->view->variables()->set('save_button',"发布扩展") ;
 		
@@ -83,39 +69,23 @@ class CreateExtension extends Controller
 	}
 	
 	public function actionSubmit()
-	{
-		//加载所有控件的值
-		if (! $this->view->loadWidgets ( $this->params ))
-		{
-			return;
-		}
-
+	{	
+		//$this->extension->printStruct();
 		//记录创建时间
 		$this->extension->setData('createTime',time());
 		//记录作者
 		$this->extension->setData('author',IdManager::singleton()->currentUserId());
-
-		$this->view->exchangeData ( DataExchanger::WIDGET_TO_MODEL );
-
-		/*           处理附件             */
+		
 		if($this->params->has('extension_files'))
 		{
-			$arrExtensionFiles = $this->params->get('extension_files');
-			$arrExtensionFilesList = $this->params->get('extension_list');
-			if(!$arrExtensionFilesList)
-			{
-				$arrExtensionFilesList = array();
-			}
+			$ExtensionFiles = $this->params->get('extension_files');
+
 			$aStoreFolder = Extension::flyweight('extensionstore')->FilesFolder();
-			$aAchiveStrategy = DateAchiveStrategy::flyweight ( Array (true, true, true ) );
 				
-			$aAttachmentsModel = $this->extension->child('attachments');
-				
-			foreach($arrExtensionFiles['name'] as $nKey=>$sFileName)
-			{
-				$sFileTempName = $arrExtensionFiles['tmp_name'][$nKey];
-				$sFileType = $arrExtensionFiles['type'][$nKey];
-				$sFileSize = $arrExtensionFiles['size'][$nKey];
+	
+				$sFileTempName = $ExtensionFiles['tmp_name'];
+				$sFileType = $ExtensionFiles['type'];
+				$sFileSize = $ExtensionFiles['size'];
 				//文件是否上传成功
 				if( empty($sFileTempName) || empty($sFileType) || empty($sFileSize) )
 				{
@@ -129,36 +99,121 @@ class CreateExtension extends Controller
 				}
 				
 				$xml = simplexml_load_file('zip://'.$sFileTempName."#metainfo.xml") ;
-				
+
 				$aExtMetainfo = ExtensionMetainfo::loadFromXML($xml);
-				$sExtensionVersionString = $aExtMetainfo->version();
+
+				$sExtensionVersionString = $aExtMetainfo->version()->toString();
+				$nVersionInt = Version::fromString($sExtensionVersionString);
 				$sExtensionName = $aExtMetainfo->name();
-				$sExtensionDec = $aExtMetainfo->description();
-				
-				if(!$sExtensionName || !$sExtensionVersionString || !$sExtensionDec){
-					$this->messageQueue ()->create ( Message::error, "metainfo不完整 , 缺少扩展名称或版本号" );
+				$sExtensionTitle = $aExtMetainfo->title();
+ 				$sExtensionDec = $aExtMetainfo->description();
+ 				
+ 				$aExtensionDependence = $aExtMetainfo->dependence();
+ 				$arrExtensionDependence = array();
+ 				
+ 				$nVersionInt = Version::fromString($sExtensionVersionString);
+
+				foreach($aExtensionDependence->iterator() as $item)
+				{
+					$this->dependence->load();
+					switch ($item->type())
+					{	
+						case 'language';
+							$this->dependence->setData('did',null);
+							$this->dependence->setData('ext_name',$sExtensionName);
+							$this->dependence->setData('ext_version_int',$aExtMetainfo->version()->to32Integer());
+							$this->dependence->setData('type',$item->type());
+							$this->dependence->setData('itemname','php');
+							$aLow=$item->versionScope()->low();
+							$this->dependence->setData('low',empty($aLow)?null:$aLow->to32Integer());
+							$aHigh=$item->versionScope()->high();
+							$this->dependence->setData('high',empty($aHigh)?null:$aHigh->to32Integer());
+							$this->dependence->setData('lowcompare',$item->versionScope()->lowCompare());
+							$this->dependence->setData('highcompare',$item->versionScope()->highCompare());
+							$this->dependence->save ();
+							break ;
+						case 'language_module'; 
+							$this->dependence->setData('did',null);
+							$this->dependence->setData('ext_name',$sExtensionName);
+							$this->dependence->setData('ext_version_int',$aExtMetainfo->version()->to32Integer());
+							$this->dependence->setData('type',$item->type());
+							$this->dependence->setData('itemname',$item->itemName());
+							$aLow=$item->versionScope()->low();
+							$this->dependence->setData('low',empty($aLow)?null:$aLow->to32Integer());
+							$aHigh=$item->versionScope()->high();
+							$this->dependence->setData('high',empty($aHigh)?null:$aHigh->to32Integer());
+							$this->dependence->setData('lowcompare',$item->versionScope()->lowCompare());
+							$this->dependence->setData('highcouse org\opencomb\platform\ext\ExtensionMetainfo;
+									mpare',$item->versionScope()->highCompare());
+							$this->dependence->save ();
+							break;
+						case 'framework';
+							$this->dependence->setData('did',null);
+							$this->dependence->setData('ext_name',$sExtensionName);
+							$this->dependence->setData('ext_version_int',$aExtMetainfo->version()->to32Integer());
+							$this->dependence->setData('type',$item->type());
+							$this->dependence->setData('itemname','framework');
+							$aLow=$item->versionScope()->low();
+							$this->dependence->setData('low',empty($aLow)?null:$aLow->to32Integer());
+							$aHigh=$item->versionScope()->high();
+							$this->dependence->setData('high',empty($aHigh)?null:$aHigh->to32Integer());
+							$this->dependence->setData('lowcompare',$item->versionScope()->lowCompare());
+							$this->dependence->setData('highcompare',$item->versionScope()->highCompare());
+							$this->dependence->save ();
+							break;
+						case 'platform';
+							$this->dependence->setData('did',null);
+							$this->dependence->setData('ext_name',$sExtensionName);
+							$this->dependence->setData('ext_version_int',$aExtMetainfo->version()->to32Integer());
+							$this->dependence->setData('type',$item->type());
+							$this->dependence->setData('itemname','opencomb');
+							$aLow=$item->versionScope()->low();
+							$this->dependence->setData('low',empty($aLow)?null:$aLow->to32Integer());
+							$aHigh=$item->versionScope()->high();
+							$this->dependence->setData('high',empty($aHigh)?null:$aHigh->to32Integer());
+							$this->dependence->setData('lowcompare',$item->versionScope()->lowCompare());
+							$this->dependence->setData('highcompare',$item->versionScope()->highCompare());
+							$this->dependence->save ();
+							break;
+						case 'extension'; 
+							$this->dependence->setData('did',null);
+							$this->dependence->setData('ext_name',$sExtensionName);
+							$this->dependence->setData('ext_version_int',$aExtMetainfo->version()->to32Integer());
+							$this->dependence->setData('type',$item->type());
+							$this->dependence->setData('itemname',$item->itemName());
+							$aLow=$item->versionScope()->low();
+							$this->dependence->setData('low',empty($aLow)?null:$aLow->to32Integer());
+							$aHigh=$item->versionScope()->high();
+							$this->dependence->setData('high',empty($aHigh)?null:$aHigh->to32Integer());
+							$this->dependence->setData('lowcompare',$item->versionScope()->lowCompare());
+							$this->dependence->setData('highcompare',$item->versionScope()->highCompare());
+							$this->dependence->save ();
+							break;
+					}
 				}
+				//exit;
+				if(!$sExtensionName || !$sExtensionVersionString || !$sExtensionDec){
+					$this->messageQueue ()->create ( Message::error, "metainfo不完整 , 缺少扩展名称或版本号，内容描述" );
+				}
+				
 				
 				$nVersionInt = Version::fromString($sExtensionVersionString);
 				
-				$this->extension->setData('version',$sExtensionVersionString);
-				$this->extension->setData('version_int',$nVersionInt);
-				$this->extension->setData('title',$sExtensionName);
-				$this->extension->setData('description',$sExtensionDec);
-					
+				
 				//移动文件
 				if (empty ( $aStoreFolder ))
 				{
 					throw new Exception ( "非法的路径属性,无法依赖此路径属性创建对应的文件夹对象" );
 				}
-					
+				
 				if (! $aStoreFolder->exists ())
 				{
 					$aStoreFolder = $aStoreFolder->create ();
 				}
-					
+				
 				// 保存文件
-				$sSavedFile = $aAchiveStrategy->makeFilePath ( array(), $aStoreFolder );
+				$sSavedFile = $aStoreFolder->HttpUrl();
+
 				// 创建保存目录
 				$aFolderOfSavedFile = new Folder( $sSavedFile ) ;
 				if( ! $aFolderOfSavedFile->exists() ){
@@ -167,32 +222,36 @@ class CreateExtension extends Controller
 						throw new Exception ( __CLASS__ . "的" . __METHOD__ . "在创建路径\"%s\"时出错", array ($aFolderOfSavedFile->path () ) );
 					}
 				}
-				$sSavedFile = $sSavedFile . $aAchiveStrategy->makeFilename ( array('tmp_name'=> $sFileTempName, 'name'=> $sFileName) ) ;
-
+				
+				$sSavedFile = $sSavedFile . '/' . $sExtensionName . '-' . $sExtensionVersionString . '.' . 'zip';
+				
 				//转换成相对路径
 				if( strpos($sSavedFile , $aStoreFolder->path()) === 0 ){
 					$sSavedFileRelativePath = substr($sSavedFile,strlen($aStoreFolder->path()));
 				}
-
+				
 				if(!move_uploaded_file($sFileTempName,$sSavedFile))
 				{
 					throw new Exception ( "上传文件失败,move_uploaded_file , 临时路径:" . $sFileTempName . ", 目的路径:" .$sSavedFile );
 				}
-
+				
 				$arrIndexs = explode(',', $this->params->get('extension_files_index'));
-
-				$aNewFileModel = $aAttachmentsModel->createChild();
-				$aNewFileModel->setData('orginname' , $sFileName);
-				$aNewFileModel->setData('storepath' , $sSavedFileRelativePath); //httpURL()
-				$aNewFileModel->setData('size' , $sFileSize );
-				$aNewFileModel->setData('type' , $sFileType );
+				
+			
+				$this->extension->setData('version',$sExtensionVersionString);
+				$this->extension->setData('ext_version_int',$aExtMetainfo->version()->to32Integer());
+				$this->extension->setData('ext_name',$sExtensionName);
+				$this->extension->setData('title',$sExtensionTitle);
+				$this->extension->setData('description',$sExtensionDec);
+				$this->extension->setData('orginname' , $sExtensionName . '-' . $sExtensionVersionString . '.' . 'zip');
+				$this->extension->setData('pkgUrl' , $sSavedFile); 
+				$this->extension->setData('size' , $sFileSize );
+				$this->extension->setData('type' , $sFileType );
 			}
-		}
 		/*           end 处理附件             */
 		try{
 			if ($this->extension->save ())
 			{
-				// 					$this->view->hideForm ();
 				$this->messageQueue ()->create ( Message::success, "扩展保存成功" );
 			}
 			else
