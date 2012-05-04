@@ -1,13 +1,12 @@
 <?php
 namespace org\opencomb\extensionstore\frame ;
 
+use org\jecat\framework\mvc\controller\WebpageFrame;
 use org\jecat\framework\mvc\model\db\Category;
-
-use org\opencomb\coresystem\mvc\controller\FrontFrame;
 use org\jecat\framework\bean\BeanFactory;
 use org\jecat\framework\mvc\view\View;
 
-class ExtensionFrontFrame extends FrontFrame
+class ExtensionFrontFrame extends WebpageFrame
 {
 	public function createBeanConfig()
 	{
