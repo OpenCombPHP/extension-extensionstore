@@ -7,6 +7,7 @@ use org\jecat\framework\system\Application;
 use org\opencomb\extensionstore\extension\TopList;
 use org\jecat\framework\util\Version;
 use org\opencomb\platform\ext\ExtensionManager;
+use org\opencomb\platform\ext\Extension;
 
 class Index extends Controller
 {
@@ -18,13 +19,6 @@ class Index extends Controller
 					'template'=>'Index.html',
 					'class'=>'view',
 					'model'=>'extension',
-						'widgets' => array(
-								array(
-										'id'=>'edit_title',
-										'class'=>'text',
-										'title'=>'控制器'
-								),
-						)
 				),
 				'model:extension'=>array(
 						'class'=>'model',
@@ -152,19 +146,60 @@ class Index extends Controller
 					,'author'=>$aModel->data('author'),'orginname'=>$aModel->data('orginname')
 					,'pkgUrl'=>$aModel->data('pkgUrl'),'size'=>$aModel->data('size')
 					,'type'=>$aModel->data('type')
-					,'dependence'=>array()
+					,'dependence'=>array(),'descriptionless'=>mb_substr($aModel->data('description'), 0,13,'utf-8')
 			);
-		
+			
 			foreach($aModel->child('dependence')->childIterator() as $adependence)
 			{
-				$arrModelFirst[$key]['dependence'][]=array('type'=>$adependence->data('type'),'itemname'=>$adependence->data('itemname')
-						,'low'=>Version::from32Integer($adependence->data('low'))->toString()
-						,'high'=>Version::from32Integer($adependence->data('high'))->toString()
-						,'lowcompare'=>$adependence->data('lowcompare'),'highcompare'=>$adependence->data('highcompare')
-				);
+				
+				switch($adependence->data('type'))
+				{
+					case 'language';
+						$arrModelFirst[$key]['dependence'][]=array('type'=>$adependence->data('type'),'itemname'=>$adependence->data('itemname')
+								,'low'=>Version::from32Integer($adependence->data('low'))->toString()
+								,'high'=>$adependence->data('high')==null ?null :Version::from32Integer($adependence->data('high'))->toString()
+								,'lowcompare'=>$adependence->data('lowcompare'),'highcompare'=>$adependence->data('highcompare')
+								,'typeCh'=>'开发语言','itemnameCh'=>null
+						);
+						break;
+					case 'language_module';
+						$arrModelFirst[$key]['dependence'][]=array('type'=>$adependence->data('type'),'itemname'=>$adependence->data('itemname')
+								,'low'=>Version::from32Integer($adependence->data('low'))->toString()
+								,'high'=>$adependence->data('high')==null ?null :Version::from32Integer($adependence->data('high'))->toString()
+								,'lowcompare'=>$adependence->data('lowcompare'),'highcompare'=>$adependence->data('highcompare')
+								,'typeCh'=>'开发语言模块','itemnameCh'=>null
+						);
+						break;
+					case 'framework';
+						$arrModelFirst[$key]['dependence'][]=array('type'=>$adependence->data('type'),'itemname'=>$adependence->data('itemname')
+								,'low'=>Version::from32Integer($adependence->data('low'))->toString()
+								,'high'=>$adependence->data('high')==null ?null :Version::from32Integer($adependence->data('high'))->toString()
+								,'lowcompare'=>$adependence->data('lowcompare'),'highcompare'=>$adependence->data('highcompare')
+								,'typeCh'=>'支持框架','itemnameCh'=>'蜂巢框架'
+						);
+						break;
+					case 'platform';
+						$arrModelFirst[$key]['dependence'][]=array('type'=>$adependence->data('type'),'itemname'=>$adependence->data('itemname')
+								,'low'=>Version::from32Integer($adependence->data('low'))->toString()
+								,'high'=>$adependence->data('high')==null ?null :Version::from32Integer($adependence->data('high'))->toString()
+								,'lowcompare'=>$adependence->data('lowcompare'),'highcompare'=>$adependence->data('highcompare')
+								,'typeCh'=>'平台','itemnameCh'=>'蜂巢平台'
+						);
+						break;
+					case 'extension';
+						
+						$aExt=Extension::flyweight($adependence->data('itemname'));
+						$arrModelFirst[$key]['dependence'][]=array('type'=>$adependence->data('type'),'itemname'=>$adependence->data('itemname')
+								,'low'=>Version::from32Integer($adependence->data('low'))->toString()
+								,'high'=>$adependence->data('high')==null ?null :Version::from32Integer($adependence->data('high'))->toString()
+								,'lowcompare'=>$adependence->data('lowcompare'),'highcompare'=>$adependence->data('highcompare')
+								,'typeCh'=>'扩展','itemnameCh'=>$aExt->metainfo()->title()
+						);
+						break;	
+				};
 			}
 		}
-		
+
 		//first是第一个数组，将model中所有数据行集合成一个数组
 		//second重新组合first，数组下标由extname和extversionint组成
 		$arrModelSecond=array();
@@ -181,6 +216,7 @@ class Index extends Controller
 					,'author'=>$arrModelFirst[$i]['author'],'orginname'=>$arrModelFirst[$i]['orginname']
 					,'pkgUrl'=>$arrModelFirst[$i]['pkgUrl'],'size'=>$arrModelFirst[$i]['size']
 					,'type'=>$arrModelFirst[$i]['type'],'dependence'=>$arrModelFirst[$i]['dependence']
+					,'descriptionless'=>$arrModelFirst[$i]['descriptionless']
 			);
 			for($h=$i+1;$h<count($arrModelFirst);$h++)
 			{
@@ -193,6 +229,7 @@ class Index extends Controller
 								,'author'=>$arrModelFirst[$h]['author'],'orginname'=>$arrModelFirst[$h]['orginname']
 								,'pkgUrl'=>$arrModelFirst[$h]['pkgUrl'],'size'=>$arrModelFirst[$h]['size']
 								,'type'=>$arrModelFirst[$h]['type'],'dependence'=>$arrModelFirst[$h]['dependence']
+								,'descriptionless'=>$arrModelFirst[$i]['descriptionless']
 					);
 				}
 			}
