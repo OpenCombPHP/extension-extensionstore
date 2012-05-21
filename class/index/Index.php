@@ -193,7 +193,7 @@ class Index extends Controller
 								,'low'=>Version::from32Integer($adependence->data('low'))->toString()
 								,'high'=>$adependence->data('high')==null ?null :Version::from32Integer($adependence->data('high'))->toString()
 								,'lowcompare'=>$adependence->data('lowcompare'),'highcompare'=>$adependence->data('highcompare')
-								,'typeCh'=>'扩展','itemnameCh'=>$aExt->metainfo()->title()
+								,'typeCh'=>'扩展','itemnameCh'=>$aExt->metainfo()->title()==null ? null :$aExt->metainfo()->title()
 						);
 						break;	
 				};

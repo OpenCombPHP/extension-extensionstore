@@ -1,0 +1,31 @@
+@charset "utf-8";
+/* CSS Document */
+
+.extensionSetup div{width:50px; float:left;}
+.extensionSetup div div{margin-left:60px;margin-bottom:6px;}
+.extensionStore{padding:10px; border-radius:5px;margin:5px 0;background:#fff; margin-bottom:10px;}
+.extensionStore:hover{ background:#d8eaf8;}
+.extensionContent{ position:relative}
+.extensionUse{ position:absolute; top:0; right:0;/*right:500px;*/}
+.extensionDownLoad{margin-top:3px; margin-right:10px; float:left;}
+.extensionState{margin-top:3px; margin-right:10px; float:left;}
+.extensionSelect{margin-right:10px; float:left;}
+.extensionDescription{margin-top:8px;}
+.extensionDependence{margin-top:8px;}
+/*
+.extensionSetup div{width:50px; float:left;}
+.extensionSetup div div{margin-left:60px;margin-bottom:6px;}
+
+.extensionStore {padding:10px; border-radius:5px;margin:5px 0;background:#fff;}
+.extensionStore:hover{ background:#d8eaf8;}
+
+.extensionContent {margin-right:20px; float:left;}
+.extensionDescription {margin-right:20px; float:left;}
+.extensionDescriptionMore {margin-right:20px; overflow:hidden;}
+.extensionDependence {margin-right:20px; float:left; overflow:hidden;}
+.extensionUse {margin-right:20px; float:left;}
+.extensionDownLoad {margin-top:5px; float:left;}
+.extensionState {margin-top:5px; float:left;}
+.extensionSelect {float:left;}
+.extensionDescriptionMore span{overflow:hidden;}
+*/

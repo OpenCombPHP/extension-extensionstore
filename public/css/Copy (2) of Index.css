@@ -1,0 +1,13 @@
+@charset "utf-8";
+/* CSS Document */
+.extensionStore  {padding:5px; border-radius:5px;margin:20px 0;background:#f2f6f9;}
+.extensionStore:hover{background:#d8eaf8;}
+.extensionContent {margin-right:20px; float:left;}
+.extensionDescription {margin-right:20px; float:left;}
+.extensionDescriptionMore {margin-right:20px; overflow:hidden;}
+.extensionDependence {margin-right:20px; float:left; overflow:hidden;}
+.extensionUse {margin-right:20px; float:left;}
+.extensionDownLoad {margin-top:5px; float:left;}
+.extensionState {margin-top:5px; float:left;}
+.extensionSelect {float:left;}
+.extensionDescriptionMore span{overflow:hidden;}

@@ -1,0 +1,355 @@
+<lib name='jquery'/>
+<lib name='jquery.farbtastic'/>
+<css src="extensionstore:css/Index.css" />
+<resrc />
+<js src="coresystem:js/jquery-1.7.1.js"/>
+
+
+<script type="text/javascript">
+	jQuery(document).ready(function(){
+			var host = "http://oc.qs.local.com/?c=org.opencomb.extensionstoresetup.TestJsonp";
+			jQuery.ajax({
+				type : 'GET',
+				cache : false,
+				dataType : "jsonp",
+				jsonp : "callback",
+				jsonpCallback : "setupCheck",
+				url : "http://{=$BackAddress}?c=org.opencomb.extensionstoresetup.TestJsonp",
+				success : function(data) {
+				}
+			});	
+	});
+	
+	jQuery(function(){
+		jQuery('.category_go_up ').click(function(){
+			var host = "http://oc.qs.local.com/?c=org.opencomb.extensionstoresetup.TestJsonp";
+			jQuery.ajax({
+				type : 'GET',
+				cache : false,
+				dataType : "jsonp",
+				jsonp : "callback",
+				jsonpCallback : "huidiao",
+				url : "http://oc.qs.local.com?c=org.opencomb.extensionstoresetup.TestJsonp",
+				success : function(data) {
+				}
+			});
+	
+		});
+	});
+	
+	function huidiao2(){
+		alert('ddd');
+	}
+	
+	function displayMore(data){
+		if(document.getElementById(data).style.overflow=='' || document.getElementById(data).style.overflow=='hidden')
+		{
+			document.getElementById(data).style.overflow='scroll';
+			document.getElementById(data+'div').style.overflow='scroll';
+			document.getElementById(data+'link').innerHTML="收起";
+			
+		}else if(document.getElementById(data).style.overflow=='scroll'){
+			document.getElementById(data+'link').innerHTML="更多";
+			document.getElementById(data).style.overflow='hidden';
+			document.getElementById(data+'div').style.overflow='hidden';
+		}
+	}
+	
+	function setupCheck(data){
+		var aExtensionSteup = document.getElementById('extensionSetup');
+		var TagList=aExtensionSteup.getElementsByTagName('div');
+		
+		//alert(TagList.length);
+		for(var i=0;i<TagList.length;i++)
+		{
+			//alert(TagList[i].id);
+			//console.log(TagList[i].getAttributeNode('attr.ExtName').value);
+			
+			if(TagList[i].getAttributeNode('attr.Flag').value==1)
+			{	
+				for(item in data)
+				{	
+					if(item==TagList[i].getAttributeNode('attr.ExtName').value)
+					{	
+						if(data[item].compareversion>TagList[i].getAttributeNode('attr.versionBit').value)
+						{	
+							document.getElementById(item+TagList[i].getAttributeNode('attr.version').value+"setup").style.display='';
+						}else if(data[item].compareversion<TagList[i].getAttributeNode('attr.versionBit').value){
+							console.log(TagList[i].getAttributeNode('attr.version').value);
+							document.getElementById(item+TagList[i].getAttributeNode('attr.version').value+"update").style.display='';
+						}else{
+							document.getElementById(item+TagList[i].getAttributeNode('attr.version').value+"installed").style.display='';
+						}
+					}	
+				}
+			}
+			
+		}
+		
+		var TagList2=aExtensionSteup.getElementsByTagName('div');
+		for(var i=0;i<TagList.length;i++)
+		{
+			if(TagList[i].getAttributeNode('attr.Flag').value==1)
+			{
+				var bUninstalled =false;
+				for(item in data)
+				{
+					if(item==TagList[i].getAttributeNode('attr.ExtName').value)
+					{	
+						bUninstalled=true;
+					}
+				}
+				if(!bUninstalled)
+				{
+					for(var h=0;h<TagList2.length;h++)
+					{
+						if(TagList2[h].getAttributeNode('attr.Flag').value==1 )
+						{
+							
+							if(TagList2[h].getAttributeNode('attr.ExtName').value==TagList[i].getAttributeNode('attr.ExtName').value)
+							{
+								document.getElementById(TagList[h].getAttributeNode('attr.ExtName').value+TagList[h].getAttributeNode('attr.version').value+"uninstalled").style.display='';
+							}
+						}
+					}
+					
+				}
+			}
+		}	
+	}
+	
+
+	function installExtension(iframeSrc){
+		//alert(ddee);
+		var nZip = iframeSrc.indexOf(".zip");
+		var pkgUrl = iframeSrc.substring(0,nZip+4);
+		var nHost = iframeSrc.indexOf("setupHost"); 
+		var host = iframeSrc.substring(nHost+10);
+		alert(pkgUrl);
+		alert(host);
+		showModalDialog("http://"+host+"?c=org.opencomb.coresystem.system.ExtensionDownloadSetup&pkgUrl="+pkgUrl);
+		
+	}
+
+
+	function selectVersion(versionValue){
+		//alert(versionValue);
+		var x =document.getElementById(versionValue.substr(0,versionValue.indexOf('.'))+versionValue.substr(versionValue.indexOf('.')+1));
+		for(i=0;i<x.length;i++)
+		{
+			//var iversionValue = x.options[i].value
+			//alert(idd);
+			//jquery("#idd").hide();{=$arrItemList['advertisement_url']['name']==$arrItemSelectList['name'] ? 'selected':''}
+			document.getElementById(x.options[i].value).style.display="none";	
+		}
+
+		document.getElementById(versionValue.substr(0,versionValue.indexOf('.'))+versionValue.substr(versionValue.indexOf('.')+1)).value=versionValue;
+		//document.getElementById(versionValue.substr(0,versionValue.indexOf('.'))+dd.substr(dd.indexOf('.')+1)).size=2;
+		//jquery(#dd).show();
+		//var dd2="dd";
+		//alert(dd2);
+		//jquery("#dd2").show();
+		document.getElementById(versionValue).style.display="";
+	}
+</script>
+<div class='addExtension'>
+	<a href='/?c=org.opencomb.extensionstore.extension.CreateExtension'>提交你的扩展!</a>
+</div>
+
+<div id="extensionSetup">
+<foreach for="$arrSecond"  key='key1' item='item1'>
+	<if "count({=$item1})>1">
+		{? $i=0;}
+		<foreach for="$item1"  key='key2' item='item2'>
+			<if "$i==0">
+				<div class="extensionStore" attr.ExtName={=$key1} attr.Flag="1" attr.versionBit="{=$item2['32version']}" attr.version="{=$key2}" id="{=$key1.'.'.$key2}">
+					<div class="extensionContent" style="float:left" attr.Flag="3">
+						{=$item2['title']}<br/> 
+						{=date("Y年m月d日", $item2['createtime'])}<br/> 
+					    {=$item2['extname']} ver : {=$item2['version']}
+					</div>
+					<div class="extensionDescription" attr.Flag="3">
+						<span>描述:</span>
+						<div class="extensionDescriptionMore" id="{=$key1.$item2['32version'].'exdependiv'}">
+							<span width="100px"  overflow="hidden" id="{=$key1.$item2['32version'].'exdepen'}">{=$item2['description']}</span>
+						</div>
+						<a href='#' onclick="displayMore('{=$key1.$item2['32version'].'exdepen'}')" id="{=$key1.$item2['32version'].'exdepenlink'}">更多</a>	
+					</div>
+					<div class="extensionDependence" style="float:left" attr.Flag="3">
+						<span class="extName">
+							<a href='#' onclick="javascript:jquery('#{=$key1.$item2['32version'].'depen'}').toggle()">依赖关系</a>
+						</span><br/> 
+						<div id="{=$key1.$item2['32version'].'depen'}" attr.Flag="4" style="display:none;">
+							<foreach for="{=$item2['dependence']}" key='key3' item='item3'>
+								{=$item3['itemname']}{=$item3['lowcompare']}{=$item3['low']}
+								{=$item3['itemname']}{=$item3['highcompare']}{=$item3['high']}					
+							</foreach>
+						</div>
+					</div>
+
+					<!-- 
+					 -->
+					<div class="extensionUse"  style="float:left" attr.Flag="3">
+						<div class="extensionDownLoad"  style="display:inline-block;float:left" attr.Flag="5">
+							<a href="{=$item2['pkgUrl']}">下载</a>
+						</div>
+						<div class="extensionState"  style="display:inline-block;float:left;" attr.Flag="3">
+							<if"{=$bFlagBack}">
+								<div id="{=$key1.$key2.'setup'}" style="display:none;" attr.Flag="2">
+									<a href="#" onclick="installExtension('{=$item2['pkgUrl']}+{/*.url}')">已安装最新版本</a>
+								</div>
+								<div id="{=$key1.$key2.'update'}" style="display:none;" attr.Flag="2">
+									<a href="#" onclick="installExtension('{=$item2['pkgUrl']}+{/*.url}')">升级</a>
+								</div>
+								<div id="{=$key1.$key2.'installed'}" style="display:none;" attr.Flag="2">
+									<p>已安装</p>
+								</div>
+								<div id="{=$key1.$key2.'uninstalled'}" style="display:none;" attr.Flag="2">
+									<a href="#" onclick="installExtension('{=$item2['pkgUrl']}+{/*.url}')">安装</a>
+								</div>
+							</if>
+						</div>
+						<div class="extensionSelect" attr.Flag="6" style="display:inline-block;float:left;">
+							<select id="{=$key1.$key2}" onchange="selectVersion(this.options[this.options.selectedIndex].value)">
+								<foreach for="{=$item2['option']}" key='key3' item='item3'>
+									<option value="{=$key3}">{=$item3}</option>						
+								</foreach>
+							</select>
+						</div>
+					</div>
+				</div>
+			<else/>
+				<div class="extensionStore"  attr.ExtName={=$key1} attr.Flag="1" attr.versionBit="{=$item2['32version']}" attr.version="{=$key2}" id="{=$key1.'.'.$key2}" style="display:none;">
+					<div class="extensionContent" attr.Flag="3">
+						{=$item2['title']} <br/>
+						{=date("Y年m月d日", $item2['createtime'])}<br/>
+					    {=$item2['extname']} ver : {=$item2['version']}
+					</div>
+					<div class="extensionDescription" attr.Flag="3">
+						<span>描述:</span>
+						<div class="extensionDescriptionMore" id="{=$key1.$item2['32version'].'exdependiv'}">
+							<span width="100px"  overflow="hidden" id="{=$key1.$item2['32version'].'exdepen'}">{=$item2['description']}</span>
+						</div>
+						<a href='#' onclick="displayMore('{=$key1.$item2['32version'].'exdepen'}')" id="{=$key1.$item2['32version'].'exdepenlink'}">更多</a>	
+					</div>
+					<div class="extensionDependence" style="float:left" attr.Flag="3">
+						<span class="extName">
+							<a href='#' onclick="javascript:jquery('#{=$key1.$item2['32version'].'depen'}').toggle()">依赖关系</a>
+						</span><br/> 
+						<div id="{=$key1.$item2['32version'].'depen'}" attr.Flag="4" style="display:none;">
+							<foreach for="{=$item2['dependence']}" key='key3' item='item3'>
+								{=$item3['itemname']}{=$item3['lowcompare']}{=$item3['low']}
+								{=$item3['itemname']}{=$item3['highcompare']}{=$item3['high']}					
+							</foreach>
+						</div>
+					</div>
+					<!-- 
+					 -->
+					<div class="extensionUse" attr.Flag="3">
+						<div class="extensionDownLoad"  style="display:inline-block;float:left" attr.Flag="5">
+							<a href="{=$item2['pkgUrl']}">下载</a>
+						</div>
+						<div class="extensionState"  style="display:inline-block;float:left;" attr.Flag="3">
+							<if"{=$bFlagBack}">
+								<div id="{=$key1.$key2.'setup'}" style="display:none;" attr.Flag="2">
+									<a href="#" onclick="installExtension('{=$item2['pkgUrl']}+{/*.url}')">已安装最新版本</a>
+								</div>
+								<div id="{=$key1.$key2.'update'}" style="display:none;" attr.Flag="2">
+									<a href="#" onclick="installExtension('{=$item2['pkgUrl']}+{/*.url}')">升级</a>
+								</div>
+								<div id="{=$key1.$key2.'installed'}" style="display:none;" attr.Flag="2">
+									<p>已安装</p>
+								</div>
+								<div id="{=$key1.$key2.'uninstalled'}" style="display:none;" attr.Flag="2">
+									<a href="#" onclick="installExtension('{=$item2['pkgUrl']}+{/*.url}')">安装</a>
+								</div>
+							</if>
+						</div>
+						<div  class="extensionSelect" attr.Flag="6" style="display:inline-block;float:left;">
+							<select id="{=$key1.$key2}" onchange="selectVersion(this.options[this.options.selectedIndex].value)">
+								<foreach for="{=$item2['option']}" key='key3' item='item3'>
+									<option value="{=$key3}">{=$item3}</option>						
+								</foreach>
+							</select>
+						</div>
+					</div>
+				</div>
+			</if>
+			{? $i++;}
+			
+		</foreach>
+		<else/>
+		<foreach for="$item1"  key='key2' item='item2'>
+				<div div class="extensionStore"  attr.ExtName={=$key1} attr.Flag="1" attr.versionBit="{=$item2['32version']}" attr.version="{=$key2}" id="{=$key1.'.'.$key2}">
+					<div class="extensionContent" attr.Flag="3">
+						{=$item2['title']} <br/>
+						{=date("Y年m月d日", $item2['createtime'])}<br/>
+					    {=$item2['extname']} ver : {=$item2['version']}
+					</div>
+					<div class="extensionDescription" attr.Flag="3">
+						<span>描述:</span>
+						<div class="extensionDescriptionMore" id="{=$key1.$item2['32version'].'exdependiv'}">
+							<span width="100px"  overflow="hidden" id="{=$key1.$item2['32version'].'exdepen'}">{=$item2['description']}</span>
+						</div>
+						<a href='#' onclick="displayMore('{=$key1.$item2['32version'].'exdepen'}')" id="{=$key1.$item2['32version'].'exdepenlink'}">更多</a>	
+					</div>
+					<div class="extensionDependence" style="float:left" attr.Flag="3">
+						<span class="extName">
+							<a href='#' onclick="javascript:jquery('#{=$key1.$item2['32version'].'depen'}').toggle(huidiao2)">依赖关系</a>
+						</span><br/> 
+						<div id="{=$key1.$item2['32version'].'depen'}" attr.Flag="4" style="display:none;">
+							<foreach for="{=$item2['dependence']}" key='key3' item='item3'>
+								{=$item3['itemname']}{=$item3['lowcompare']}{=$item3['low']}
+								{=$item3['itemname']}{=$item3['highcompare']}{=$item3['high']}					
+							</foreach>
+						</div>
+					</div>
+					<div class="extensionUse" attr.Flag="3">
+						<div class="extensionDownLoad"  style="display:inline-block;float:left" attr.Flag="5">
+							<a href="{=$item2['pkgUrl']}">下载</a>
+						</div>
+						<div class="extensionState"  style="display:inline-block;float:left;" attr.Flag="3">
+							<if"{=$bFlagBack}">
+								<div id="{=$key1.$key2.'setup'}" style="display:none;" attr.Flag="2">
+									<a href="#" onclick="installExtension('{=$item2['pkgUrl']}+{/*.url}')">已安装最新版本</a>
+								</div>
+								<div id="{=$key1.$key2.'update'}" style="display:none;" attr.Flag="2">
+									<a href="#" onclick="installExtension('{=$item2['pkgUrl']}+{/*.url}')">升级</a>
+								</div>
+								<div id="{=$key1.$key2.'installed'}" style="display:none;" attr.Flag="2">
+									<p>已安装</p>
+								</div>
+								<div id="{=$key1.$key2.'uninstalled'}" style="display:none;" attr.Flag="2">
+									<a href="#" onclick="installExtension('{=$item2['pkgUrl']}+{/*.url}')">安装</a>
+								</div>
+							</if>
+						</div>
+						<div  class="extensionSelect" attr.Flag="6" style="display:inline-block;float:left;">
+							<select id="{=$key1.$key2}" onchange="selectVersion(this.options[this.options.selectedIndex].value)">
+								<foreach for="{=$item2['option']}" key='key3' item='item3'>
+									<option value="{=$key3}">{=$item3}</option>						
+								</foreach>
+							</select>
+						</div>
+					</div>
+				</div>
+		</foreach>
+		
+	</if>
+
+
+
+</foreach>
+</div>
+<!-- 
+<br/>
+<a href="javascript:jquery('#testtoggle').toggle()">依赖关系</a>
+<div id="testtoggle">
+		dsfsdfsdf
+</div>
+<a href="javascript:jquery('#testtoggle').toggle()">依赖关系</a>
+<div id="testtoggle">
+		dsfsdfsdf
+</div>
+<input type="button" class="category_go_up" value="ddddd"/>
+ -->
