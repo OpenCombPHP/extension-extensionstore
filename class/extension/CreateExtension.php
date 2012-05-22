@@ -108,89 +108,7 @@ class CreateExtension extends Controller
 				$sExtensionTitle = $aExtMetainfo->title();
  				$sExtensionDec = $aExtMetainfo->description();
  				
- 				$aExtensionDependence = $aExtMetainfo->dependence();
- 				$arrExtensionDependence = array();
  				
- 				$nVersionInt = Version::fromString($sExtensionVersionString);
-
-				foreach($aExtensionDependence->iterator() as $item)
-				{
-					$this->dependence->load();
-					switch ($item->type())
-					{	
-						case 'language';
-							$this->dependence->setData('did',null);
-							$this->dependence->setData('ext_name',$sExtensionName);
-							$this->dependence->setData('ext_version_int',$aExtMetainfo->version()->to32Integer());
-							$this->dependence->setData('type',$item->type());
-							$this->dependence->setData('itemname','php');
-							$aLow=$item->versionScope()->low();
-							$this->dependence->setData('low',empty($aLow)?null:$aLow->to32Integer());
-							$aHigh=$item->versionScope()->high();
-							$this->dependence->setData('high',empty($aHigh)?null:$aHigh->to32Integer());
-							$this->dependence->setData('lowcompare',$item->versionScope()->lowCompare());
-							$this->dependence->setData('highcompare',$item->versionScope()->highCompare());
-							$this->dependence->save ();
-							break ;
-						case 'language_module'; 
-							$this->dependence->setData('did',null);
-							$this->dependence->setData('ext_name',$sExtensionName);
-							$this->dependence->setData('ext_version_int',$aExtMetainfo->version()->to32Integer());
-							$this->dependence->setData('type',$item->type());
-							$this->dependence->setData('itemname',$item->itemName());
-							$aLow=$item->versionScope()->low();
-							$this->dependence->setData('low',empty($aLow)?null:$aLow->to32Integer());
-							$aHigh=$item->versionScope()->high();
-							$this->dependence->setData('high',empty($aHigh)?null:$aHigh->to32Integer());
-							$this->dependence->setData('lowcompare',$item->versionScope()->lowCompare());
-							$this->dependence->setData('highcouse org\opencomb\platform\ext\ExtensionMetainfo;
-									mpare',$item->versionScope()->highCompare());
-							$this->dependence->save ();
-							break;
-						case 'framework';
-							$this->dependence->setData('did',null);
-							$this->dependence->setData('ext_name',$sExtensionName);
-							$this->dependence->setData('ext_version_int',$aExtMetainfo->version()->to32Integer());
-							$this->dependence->setData('type',$item->type());
-							$this->dependence->setData('itemname','framework');
-							$aLow=$item->versionScope()->low();
-							$this->dependence->setData('low',empty($aLow)?null:$aLow->to32Integer());
-							$aHigh=$item->versionScope()->high();
-							$this->dependence->setData('high',empty($aHigh)?null:$aHigh->to32Integer());
-							$this->dependence->setData('lowcompare',$item->versionScope()->lowCompare());
-							$this->dependence->setData('highcompare',$item->versionScope()->highCompare());
-							$this->dependence->save ();
-							break;
-						case 'platform';
-							$this->dependence->setData('did',null);
-							$this->dependence->setData('ext_name',$sExtensionName);
-							$this->dependence->setData('ext_version_int',$aExtMetainfo->version()->to32Integer());
-							$this->dependence->setData('type',$item->type());
-							$this->dependence->setData('itemname','opencomb');
-							$aLow=$item->versionScope()->low();
-							$this->dependence->setData('low',empty($aLow)?null:$aLow->to32Integer());
-							$aHigh=$item->versionScope()->high();
-							$this->dependence->setData('high',empty($aHigh)?null:$aHigh->to32Integer());
-							$this->dependence->setData('lowcompare',$item->versionScope()->lowCompare());
-							$this->dependence->setData('highcompare',$item->versionScope()->highCompare());
-							$this->dependence->save ();
-							break;
-						case 'extension'; 
-							$this->dependence->setData('did',null);
-							$this->dependence->setData('ext_name',$sExtensionName);
-							$this->dependence->setData('ext_version_int',$aExtMetainfo->version()->to32Integer());
-							$this->dependence->setData('type',$item->type());
-							$this->dependence->setData('itemname',$item->itemName());
-							$aLow=$item->versionScope()->low();
-							$this->dependence->setData('low',empty($aLow)?null:$aLow->to32Integer());
-							$aHigh=$item->versionScope()->high();
-							$this->dependence->setData('high',empty($aHigh)?null:$aHigh->to32Integer());
-							$this->dependence->setData('lowcompare',$item->versionScope()->lowCompare());
-							$this->dependence->setData('highcompare',$item->versionScope()->highCompare());
-							$this->dependence->save ();
-							break;
-					}
-				}
 				//exit;
 				if(!$sExtensionName || !$sExtensionVersionString || !$sExtensionDec){
 					$this->messageQueue ()->create ( Message::error, "metainfo不完整 , 缺少扩展名称或版本号，内容描述" );
@@ -246,12 +164,13 @@ class CreateExtension extends Controller
 				$this->extension->setData('orginname' , $sExtensionName . '-' . $sExtensionVersionString . '.' . 'zip');
 				$this->extension->setData('pkgUrl' , $sSavedFile); 
 				$this->extension->setData('size' , $sFileSize );
-				$this->extension->setData('type' , $sFileType );
+				$this->extension->setData('ty$aExtMetainfope' , $sFileType );
 			}
 		/*           end 处理附件             */
 		try{
 			if ($this->extension->save ())
 			{
+				$this->setDependence($aExtMetainfo,$sExtensionVersionString,$sExtensionName);
 				$this->messageQueue ()->create ( Message::success, "扩展保存成功" );
 			}
 			else
@@ -260,6 +179,93 @@ class CreateExtension extends Controller
 			}
 		}catch (Exception $e){
 			$this->messageQueue ()->create ( Message::error, "已存在此扩展" );
+		}
+	}
+	
+	public function setDependence($aExtMetainfo,$sExtensionVersionString,$sExtensionName)
+	{
+		$aExtensionDependence = $aExtMetainfo->dependence();
+		$arrExtensionDependence = array();
+		
+		$nVersionInt = Version::fromString($sExtensionVersionString);
+		
+		foreach($aExtensionDependence->iterator() as $item)
+		{
+			$this->dependence->load();
+			switch ($item->type())
+			{
+				case 'language';
+				$this->dependence->setData('did',null);
+				$this->dependence->setData('ext_name',$sExtensionName);
+				$this->dependence->setData('ext_version_int',$aExtMetainfo->version()->to32Integer());
+				$this->dependence->setData('type',$item->type());
+				$this->dependence->setData('itemname','php');
+				$aLow=$item->versionScope()->low();
+				$this->dependence->setData('low',empty($aLow)?null:$aLow->to32Integer());
+				$aHigh=$item->versionScope()->high();
+				$this->dependence->setData('high',empty($aHigh)?null:$aHigh->to32Integer());
+				$this->dependence->setData('lowcompare',$item->versionScope()->lowCompare());
+				$this->dependence->setData('highcompare',$item->versionScope()->highCompare());
+				$this->dependence->save ();
+				break ;
+				case 'language_module';
+				$this->dependence->setData('did',null);
+				$this->dependence->setData('ext_name',$sExtensionName);
+				$this->dependence->setData('ext_version_int',$aExtMetainfo->version()->to32Integer());
+				$this->dependence->setData('type',$item->type());
+				$this->dependence->setData('itemname',$item->itemName());
+				$aLow=$item->versionScope()->low();
+				$this->dependence->setData('low',empty($aLow)?null:$aLow->to32Integer());
+				$aHigh=$item->versionScope()->high();
+				$this->dependence->setData('high',empty($aHigh)?null:$aHigh->to32Integer());
+				$this->dependence->setData('lowcompare',$item->versionScope()->lowCompare());
+				$this->dependence->setData('highcouse org\opencomb\platform\ext\ExtensionMetainfo;
+						mpare',$item->versionScope()->highCompare());
+				$this->dependence->save ();
+				break;
+				case 'framework';
+				$this->dependence->setData('did',null);
+				$this->dependence->setData('ext_name',$sExtensionName);
+				$this->dependence->setData('ext_version_int',$aExtMetainfo->version()->to32Integer());
+				$this->dependence->setData('type',$item->type());
+				$this->dependence->setData('itemname','framework');
+				$aLow=$item->versionScope()->low();
+				$this->dependence->setData('low',empty($aLow)?null:$aLow->to32Integer());
+				$aHigh=$item->versionScope()->high();
+				$this->dependence->setData('high',empty($aHigh)?null:$aHigh->to32Integer());
+				$this->dependence->setData('lowcompare',$item->versionScope()->lowCompare());
+				$this->dependence->setData('highcompare',$item->versionScope()->highCompare());
+				$this->dependence->save ();
+				break;
+				case 'platform';
+				$this->dependence->setData('did',null);
+				$this->dependence->setData('ext_name',$sExtensionName);
+				$this->dependence->setData('ext_version_int',$aExtMetainfo->version()->to32Integer());
+				$this->dependence->setData('type',$item->type());
+				$this->dependence->setData('itemname','opencomb');
+				$aLow=$item->versionScope()->low();
+				$this->dependence->setData('low',empty($aLow)?null:$aLow->to32Integer());
+				$aHigh=$item->versionScope()->high();
+				$this->dependence->setData('high',empty($aHigh)?null:$aHigh->to32Integer());
+				$this->dependence->setData('lowcompare',$item->versionScope()->lowCompare());
+				$this->dependence->setData('highcompare',$item->versionScope()->highCompare());
+				$this->dependence->save ();
+				break;
+				case 'extension';
+				$this->dependence->setData('did',null);
+				$this->dependence->setData('ext_name',$sExtensionName);
+				$this->dependence->setData('ext_version_int',$aExtMetainfo->version()->to32Integer());
+				$this->dependence->setData('type',$item->type());
+				$this->dependence->setData('itemname',$item->itemName());
+				$aLow=$item->versionScope()->low();
+				$this->dependence->setData('low',empty($aLow)?null:$aLow->to32Integer());
+				$aHigh=$item->versionScope()->high();
+				$this->dependence->setData('high',empty($aHigh)?null:$aHigh->to32Integer());
+				$this->dependence->setData('lowcompare',$item->versionScope()->lowCompare());
+				$this->dependence->setData('highcompare',$item->versionScope()->highCompare());
+				$this->dependence->save ();
+				break;
+			}
 		}
 	}
 }
