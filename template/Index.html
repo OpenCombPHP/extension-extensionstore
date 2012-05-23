@@ -102,14 +102,7 @@
 		document.getElementById(versionValue).style.display="";
 	}
 	
-	
 	function displayMore(descriptionMore){
-		document.getElementById(descriptionMore+'exdescriptionmore').style.display="none";
-		document.getElementById(descriptionMore+'exdescriptionless').style.display="";
-		
-	}
-	
-	function displayMoreTest(descriptionMore){
 		if(document.getElementById(descriptionMore+'more').innerHTML=="更多")
 		{
 			document.getElementById(descriptionMore+'exdescriptionmore').style.overflow="visible";
@@ -208,11 +201,11 @@
 					</div>
 					
 					<div class="extensionDescription" attr.Flag="3">
-						<div  class="extensionDescriptionLess" attr.Flag="2" id="{=$key1.$item2['32version'].'exdescriptionmore'}" >
+						<div  class="extensionDescriptionMore" attr.Flag="2" id="{=$key1.$item2['32version'].'exdescriptionmore'}" >
 							<font face="verdana" size="2" color="green">描述</font>:{=$item2['description']}
 
 						</div>
-						<a id="{=$key1.$item2['32version']}more" href='#' onclick="displayMoreTest('{=$key1.$item2['32version']}')">更多</a>
+						<a id="{=$key1.$item2['32version']}more" href='#' onclick="displayMore('{=$key1.$item2['32version']}')">更多</a>
 						<span style="position:absolute; right:13px;">发行日期:{=date("Y年m月d日", $item2['createtime'])}</span>
 					</div>
 					
@@ -291,11 +284,12 @@
 						</div>
 					</div>
 					<div class="extensionDescription" attr.Flag="3">
-						<div  class="extensionDescriptionLess" attr.Flag="2" id="{=$key1.$item2['32version'].'exdescriptionmore'}">
+						<div  class="extensionDescriptionMore" attr.Flag="2" id="{=$key1.$item2['32version'].'exdescriptionmore'}">
 							<font face="verdana" size="2" color="green">描述</font>:{=$item2['description']}
 
 						</div>
-						<a id="{=$key1.$item2['32version']}more" href='#' onclick="displayMoreTest('{=$key1.$item2['32version']}')">更多</a>
+						<a id="{=$key1.$item2['32version']}more" href='#' onclick="displayMore('{=$key1.$item2['32version']}')">更多</a>
+						<span style="position:absolute; right:13px;">发行日期:{=date("Y年m月d日", $item2['createtime'])}</span>
 					</div>
 		
 				</div>
@@ -378,11 +372,12 @@
 					</div>
 					
 					<div class="extensionDescription" attr.Flag="3">
-						<div  class="extensionDescriptionLess" attr.Flag="2" id="{=$key1.$item2['32version'].'exdescriptionmore'}">
+						<div  class="extensionDescriptionMore" attr.Flag="2" id="{=$key1.$item2['32version'].'exdescriptionmore'}">
 							<font face="verdana" size="2" color="green">描述</font>:{=$item2['description']}
 
 						</div>
-						<a id="{=$key1.$item2['32version']}more" href='#' onclick="displayMoreTest('{=$key1.$item2['32version']}')">更多</a>
+						<a id="{=$key1.$item2['32version']}more" href='#' onclick="displayMore('{=$key1.$item2['32version']}')">更多</a>
+						<span style="position:absolute; right:13px;">发行日期:{=date("Y年m月d日", $item2['createtime'])}</span>
 					</div>
 				</div>
 		</foreach>
