@@ -85,6 +85,8 @@
 		var pkgUrl = iframeSrc.substring(0,nZip+4);
 		var nHost = iframeSrc.indexOf("setupHost"); 
 		var host = iframeSrc.substring(nHost+10);
+		pkgUrl ='http://'+'{/*.url.host}'+'/'+pkgUrl;
+		alert(pkgUrl);
 		showModalDialog("http://"+host+"?c=org.opencomb.coresystem.system.ExtensionDownloadSetup&pkgUrl="+pkgUrl);
 	}
 
@@ -107,6 +109,22 @@
 		
 	}
 	
+	function displayMoreTest(descriptionMore){
+		if(document.getElementById(descriptionMore+'more').innerHTML=="更多")
+		{
+			document.getElementById(descriptionMore+'exdescriptionmore').style.overflow="visible";
+			document.getElementById(descriptionMore+'exdescriptionmore').style.display="";
+			document.getElementById(descriptionMore+'exdescriptionmore').style.height="100%";
+			document.getElementById(descriptionMore+'more').innerHTML="收起";
+		}else {
+			document.getElementById(descriptionMore+'exdescriptionmore').style.overflow="hidden";
+			document.getElementById(descriptionMore+'exdescriptionmore').style.display="block";
+			document.getElementById(descriptionMore+'exdescriptionmore').style.height="26px";
+			document.getElementById(descriptionMore+'more').innerHTML="更多";
+		}
+		
+	}
+	
 	function displayLess(descriptionMore){
 		document.getElementById(descriptionMore+'exdescriptionless').style.display="none";
 		document.getElementById(descriptionMore+'exdescriptionmore').style.display="";
@@ -126,16 +144,19 @@
 				<div class="extensionStore" attr.ExtName={=$key1} attr.Flag="1" attr.versionBit="{=$item2['32version']}" attr.version="{=$key2}" id="{=$key1.'.'.$key2}">
 					
 					<div class="extensionContent" attr.Flag="3">
-						<h3>
-							{=$item2['title']}
-							{=date("Y年m月d日", $item2['createtime'])}
-						    {=$item2['extname']} ver : {=$item2['version']}
-					    </h3>
-					    
+						<span style="float:left">
+							<h3>{=$item2['title']}</h3>
+						 </span>
+						 <span >
+							({=$item2['extname']}) ver : <font color="green">{=$item2['version']}</font>
+						 </span>
+					    <span class="extName" style="position:absolute; top:0; right:50%;">
+							<a href='#' onclick="javascript:jquery('#{=$key1.$item2['32version'].'depen'}').toggle()">依赖关系</a>
+						</span>
 					    
 						<div class="extensionUse" attr.Flag="3">
 							<div class="extensionDownLoad" attr.Flag="5">
-								<a href="{=$item2['pkgUrl']}">下载</a>
+								<a href="http://{/*.url.host}/{=$item2['pkgUrl']}">下载</a>
 							</div>
 							<div class="extensionState" attr.Flag="3">
 								<if"{=$bFlagBack}">
@@ -164,12 +185,10 @@
 					</div>
 					
 					<div class="extensionDependence" attr.Flag="3">
-						<span class="extName">
-							<a href='#' onclick="javascript:jquery('#{=$key1.$item2['32version'].'depen'}').toggle()">依赖关系</a>
-						</span><br/> 
-						<div id="{=$key1.$item2['32version'].'depen'}" attr.Flag="4" style="display:none;">
+
+						<div id="{=$key1.$item2['32version'].'depen'}" attr.Flag="4" style="display:none;background:#f2f5f7;moz-border-radius:50px;">
 							<if "empty({=$item2['dependence']})">
-							无依赖关系
+								无依赖关系
 							</if>
 							<foreach for="{=$item2['dependence']}" key='key3' item='item3'>
 								<if"$item3['high']!=null">
@@ -189,14 +208,12 @@
 					</div>
 					
 					<div class="extensionDescription" attr.Flag="3">
-						<div  class="extensionDescriptionLess" attr.Flag="2" id="{=$key1.$item2['32version'].'exdescriptionmore'}">
-							描述:{=$item2['descriptionless']}...
-							<a href='#' onclick="displayMore('{=$key1.$item2['32version']}')">更多</a>
+						<div  class="extensionDescriptionLess" attr.Flag="2" id="{=$key1.$item2['32version'].'exdescriptionmore'}" >
+							<font face="verdana" size="2" color="green">描述</font>:{=$item2['description']}
+
 						</div>
-						<div class="extensionDescriptionMore" id="{=$key1.$item2['32version'].'exdescriptionless'}" style="display:none;" attr.Flag="2">
-							描述:<br/>{=$item2['description']}<br/>
-							<a href='#' onclick="displayLess('{=$key1.$item2['32version']}')">收起</a>	
-						</div>
+						<a id="{=$key1.$item2['32version']}more" href='#' onclick="displayMoreTest('{=$key1.$item2['32version']}')">更多</a>
+						<span style="position:absolute; right:13px;">发行日期:{=date("Y年m月d日", $item2['createtime'])}</span>
 					</div>
 					
 
@@ -205,17 +222,21 @@
 			<else/>
 				<div class="extensionStore"  attr.ExtName={=$key1} attr.Flag="1" attr.versionBit="{=$item2['32version']}" attr.version="{=$key2}" id="{=$key1.'.'.$key2}" style="display:none;">
 					<div class="extensionContent" attr.Flag="3">
-						<h3>
-							{=$item2['title']} 
-							{=date("Y年m月d日", $item2['createtime'])}
-						    {=$item2['extname']} ver : {=$item2['version']}
-					    </h3>
+						<span style="float:left">
+							<h3>{=$item2['title']}</h3>
+						 </span>
+						 <span >
+							({=$item2['extname']}) ver : <font color="green">{=$item2['version']}</font>
+						 </span>
+					    <span class="extName" style="position:absolute; top:0; right:50%;">
+							<a href='#' onclick="javascript:jquery('#{=$key1.$item2['32version'].'depen'}').toggle()">依赖关系</a>
+						</span>
 					    
 					    
 					    <div class="extensionUse" attr.Flag="3">
 					    	<span>
 								<div class="extensionDownLoad" attr.Flag="5">
-									<a href="{=$item2['pkgUrl']}">下载</a>
+									<a href="http://{/*.url.host}/{=$item2['pkgUrl']}">下载</a>
 								</div>
 							</span>
 							<span>
@@ -249,12 +270,9 @@
 
 					</div>
 					<div class="extensionDependence" attr.Flag="3">
-						<span class="extName">
-							<a href='#' onclick="javascript:jquery('#{=$key1.$item2['32version'].'depen'}').toggle()">依赖关系</a>
-						</span><br/> 
-						<div id="{=$key1.$item2['32version'].'depen'}" attr.Flag="4" style="display:none;">
+						<div id="{=$key1.$item2['32version'].'depen'}" attr.Flag="4" style="display:none;background:#f2f5f7;moz-border-radius:50px;">
 							<if "empty({=$item2['dependence']})">
-							无依赖关系
+								无依赖关系
 							</if>
 							<foreach for="{=$item2['dependence']}" key='key3' item='item3'>
 								<if"$item3['high']!=null">
@@ -274,13 +292,10 @@
 					</div>
 					<div class="extensionDescription" attr.Flag="3">
 						<div  class="extensionDescriptionLess" attr.Flag="2" id="{=$key1.$item2['32version'].'exdescriptionmore'}">
-							描述:{=$item2['descriptionless']}...
-							<a href='#' onclick="displayMore('{=$key1.$item2['32version']}')">更多</a>
+							<font face="verdana" size="2" color="green">描述</font>:{=$item2['description']}
+
 						</div>
-						<div class="extensionDescriptionMore" id="{=$key1.$item2['32version'].'exdescriptionless'}" style="display:none;" attr.Flag="2">
-							描述:<br/>{=$item2['description']}<br/>
-							<a href='#' onclick="displayLess('{=$key1.$item2['32version']}')">收起</a>	
-						</div>
+						<a id="{=$key1.$item2['32version']}more" href='#' onclick="displayMoreTest('{=$key1.$item2['32version']}')">更多</a>
 					</div>
 		
 				</div>
@@ -292,17 +307,21 @@
 		<foreach for="$item1"  key='key2' item='item2'>
 				<div div class="extensionStore"  attr.ExtName={=$key1} attr.Flag="1" attr.versionBit="{=$item2['32version']}" attr.version="{=$key2}" id="{=$key1.'.'.$key2}">
 					<div class="extensionContent" attr.Flag="3">
-						<h3>
-							{=$item2['title']}
-							{=date("Y年m月d日", $item2['createtime'])}
-						    {=$item2['extname']} ver : {=$item2['version']}
-						</h3>
+						<span style="float:left">
+							<h3>{=$item2['title']}</h3>
+						 </span>
+						 <span >
+							({=$item2['extname']}) ver : <font color="green">{=$item2['version']}</font>
+						 </span>
+					    <span class="extName" style="position:absolute; top:0; right:50%;">
+							<a href='#' onclick="javascript:jquery('#{=$key1.$item2['32version'].'depen'}').toggle()">依赖关系</a>
+						</span>
 						
 						
 						<div class="extensionUse" attr.Flag="3">
 							<span>
 								<div class="extensionDownLoad"  attr.Flag="5">
-									<a href="{=$item2['pkgUrl']}">下载</a>
+									<a href="http://{/*.url.host}/{=$item2['pkgUrl']}">下载</a>
 								</div>
 							</span>
 							<span>
@@ -337,12 +356,9 @@
 					</div>
 					
 					<div class="extensionDependence" attr.Flag="3">
-						<span class="extName">
-							<a href='#' onclick="javascript:jquery('#{=$key1.$item2['32version'].'depen'}').toggle()">依赖关系</a>
-						</span><br/> 
-						<div id="{=$key1.$item2['32version'].'depen'}" attr.Flag="4" style="display:none;">
+						<div id="{=$key1.$item2['32version'].'depen'}" attr.Flag="4" style="display:none;background:#f2f5f7;moz-border-radius:50px;">
 							<if "empty({=$item2['dependence']})">
-							无依赖关系
+								无依赖关系
 							</if>
 							<foreach for="{=$item2['dependence']}" key='key3' item='item3'>
 								<if"$item3['high']!=null">
@@ -363,13 +379,10 @@
 					
 					<div class="extensionDescription" attr.Flag="3">
 						<div  class="extensionDescriptionLess" attr.Flag="2" id="{=$key1.$item2['32version'].'exdescriptionmore'}">
-							描述:{=$item2['descriptionless']}...
-							<a href='#' onclick="displayMore('{=$key1.$item2['32version']}')">更多</a>
+							<font face="verdana" size="2" color="green">描述</font>:{=$item2['description']}
+
 						</div>
-						<div class="extensionDescriptionMore" id="{=$key1.$item2['32version'].'exdescriptionless'}" style="display:none;" attr.Flag="2">
-							描述:<br/>{=$item2['description']}<br/>
-							<a href='#' onclick="displayLess('{=$key1.$item2['32version']}')">收起</a>	
-						</div>
+						<a id="{=$key1.$item2['32version']}more" href='#' onclick="displayMoreTest('{=$key1.$item2['32version']}')">更多</a>
 					</div>
 				</div>
 		</foreach>

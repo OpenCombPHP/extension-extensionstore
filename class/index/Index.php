@@ -159,7 +159,7 @@ class Index extends Controller
 								,'low'=>Version::from32Integer($adependence->data('low'))->toString()
 								,'high'=>$adependence->data('high')==null ?null :Version::from32Integer($adependence->data('high'))->toString()
 								,'lowcompare'=>$adependence->data('lowcompare'),'highcompare'=>$adependence->data('highcompare')
-								,'typeCh'=>'开发语言','itemnameCh'=>null
+								,'typeCh'=>'语言','itemnameCh'=>null
 						);
 						break;
 					case 'language_module';
@@ -167,7 +167,7 @@ class Index extends Controller
 								,'low'=>Version::from32Integer($adependence->data('low'))->toString()
 								,'high'=>$adependence->data('high')==null ?null :Version::from32Integer($adependence->data('high'))->toString()
 								,'lowcompare'=>$adependence->data('lowcompare'),'highcompare'=>$adependence->data('highcompare')
-								,'typeCh'=>'开发语言模块','itemnameCh'=>null
+								,'typeCh'=>'语言模块','itemnameCh'=>null
 						);
 						break;
 					case 'framework';

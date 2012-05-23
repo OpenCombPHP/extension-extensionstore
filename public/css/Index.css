@@ -10,8 +10,10 @@
 .extensionDownLoad{margin-top:3px; margin-right:10px; float:left;}
 .extensionState{margin-top:3px; margin-right:10px; float:left;}
 .extensionSelect{margin-right:10px; float:left;}
-.extensionDescription{margin-top:8px;}
+.extensionDescription{margin-top:8px; }
 .extensionDependence{margin-top:8px;}
+.extensionDescriptionLess{margin-right:150px; height:26px; overflow:hidden; display:block}
+
 /*
 .extensionSetup div{width:50px; float:left;}
 .extensionSetup div div{margin-left:60px;margin-bottom:6px;}
