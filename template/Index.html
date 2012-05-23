@@ -7,14 +7,14 @@
 
 <script type="text/javascript">
 	jQuery(document).ready(function(){
-			var host = "http://oc.qs.local.com/?c=org.opencomb.extensionstoresetup.TestJsonp";
+			var host = "http://oc.qs.local.com/?c=org.opencomb.coresystem.system.ExtensionStoreJsonp";
 			jQuery.ajax({
 				type : 'GET',
 				cache : false,
 				dataType : "jsonp",
 				jsonp : "callback",
 				jsonpCallback : "setupCheck",
-				url : "http://{=$BackAddress}?c=org.opencomb.extensionstoresetup.TestJsonp",
+				url : "http://{=$BackAddress}?c=org.opencomb.coresystem.system.ExtensionStoreJsonp",
 				success : function(data) {
 				}
 			});	
