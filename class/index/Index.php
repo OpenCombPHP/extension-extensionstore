@@ -62,14 +62,15 @@ class Index extends Controller
 		
 		$arrSecond = $this->extensionVersionSort($arrModelSecond);
 		$arrSecond = $this->createVersionSelect($arrSecond);
+		$this->view->variables()->set('arrSecond',$arrSecond) ;
 		
-		
+		/*
 		$arrExtensionsChunk = array();
 		$arrExtensionsChunk = $this->getExtensionsChunk($arrSecond,$nPerPageRowNumber=10);
 		
 		$arrExtensionsPerPage = $this->getExtensionsPerPage($arrExtensionsChunk,1);
 		$this->view->variables()->set('arrSecond',$arrExtensionsPerPage) ;
-		
+		*/
 		$this->setPaginatorTester(count($arrSecond));
 		
 		if($this->params['paginator'])

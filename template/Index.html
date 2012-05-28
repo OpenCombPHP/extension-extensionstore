@@ -80,8 +80,7 @@
 	
 
 	function installExtension(iframeSrc){
-		var nZip = iframeSrc.indexOf(".zip<widget id="paginator" attr.strategy="middle" attr.showFirst="1" attr.showLast="1" attr.showTotal="1" attr.showPre="1" attr.showNext="1" />
-");
+		var nZip = iframeSrc.indexOf(".zip");
 		var pkgUrl = iframeSrc.substring(0,nZip+4);
 		var nHost = iframeSrc.indexOf("setupHost"); 
 		var host = iframeSrc.substring(nHost+10);
@@ -107,8 +106,7 @@
 		{
 			document.getElementById(descriptionMore+'exdescriptionmore').style.overflow="visible";
 			document.getElementById(descriptionMore+'exdescriptionmore').style.display="";
-			document.getElementById(descri<widget id="paginator" attr.strategy="middle" attr.showFirst="1" attr.showLast="1" attr.showTotal="1" attr.showPre="1" attr.showNext="1" />
-ptionMore+'exdescriptionmore').style.height="100%";
+			document.getElementById(descriptionMore+'exdescriptionmore').style.height="100%";
 			document.getElementById(descriptionMore+'more').innerHTML="收起";
 		}else {
 			document.getElementById(descriptionMore+'exdescriptionmore').style.overflow="hidden";
@@ -207,7 +205,7 @@ ptionMore+'exdescriptionmore').style.height="100%";
 
 						</div>
 						<a id="{=$key1.$item2['32version']}more" href='javascript:void(0)' onclick="displayMore('{=$key1.$item2['32version']}')">更多</a>
-						<span style="position:absolute; right:13px;">发行日期:{=date("Y年m月d日", $item2['createtime'])}</span>
+						<span style="position:absolute; right:13px;">Date:{=date("Y-m-d", $item2['createtime'])}</span>
 					</div>
 					
 
@@ -290,7 +288,7 @@ ptionMore+'exdescriptionmore').style.height="100%";
 
 						</div>
 						<a id="{=$key1.$item2['32version']}more" href='javascript:void(0)' onclick="displayMore('{=$key1.$item2['32version']}')">更多</a>
-						<span style="position:absolute; right:13px;">发行日期:{=date("Y年m月d日", $item2['createtime'])}</span>
+						<span style="position:absolute; right:13px;">Date:{=date("Y-m-d", $item2['createtime'])}</span>
 					</div>
 		
 				</div>
@@ -378,7 +376,7 @@ ptionMore+'exdescriptionmore').style.height="100%";
 
 						</div>
 						<a id="{=$key1.$item2['32version']}more" href='javascript:void(0)' onclick="displayMore('{=$key1.$item2['32version']}')">更多</a>
-						<span style="position:absolute; right:13px;">发行日期:{=date("Y年m月d日", $item2['createtime'])}</span>
+						<span style="position:absolute; right:13px;">Date:{=date("Y-m-d", $item2['createtime'])}</span>
 					</div>
 				</div>
 		</foreach>
