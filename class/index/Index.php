@@ -8,6 +8,7 @@ use org\opencomb\extensionstore\extension\TopList;
 use org\jecat\framework\util\Version;
 use org\opencomb\platform\ext\ExtensionManager;
 use org\opencomb\platform\ext\Extension;
+use org\jecat\framework\mvc\view\widget\paginator\PaginaltorTester;
 
 class Index extends Controller
 {
@@ -18,7 +19,12 @@ class Index extends Controller
 				'view'=>array(
 					'template'=>'Index.html',
 					'class'=>'view',
-					'model'=>'extension',
+					//'model'=>'extension',
+					'widget:paginator' => array(
+								'class' => 'paginator' ,
+// 								'count'=>2, //每页5项
+// 								'nums' =>5, //显示5个页码
+					) ,
 				),
 				'model:extension'=>array(
 						'class'=>'model',
@@ -36,13 +42,13 @@ class Index extends Controller
 				),
 		);	
 		
+		//$this->location('http://app.qs.local.com/?c=index',0);
 		$this->setCatchOutput(false) ;
 		return $arrBean;
 	}
 
 	public function process()
-	{$bFlagBack=true;
-		$this->view->variables()->set('bFlagBack',$bFlagBack) ;
+	{
 		if(strchr($_SERVER['REQUEST_URI'],'&setupHost'))
 		{
 			$bFlagBack=true;
@@ -53,10 +59,29 @@ class Index extends Controller
 		$this->modelExtension->load();
 		$aModelIterator = $this->extension->childIterator();
 		$arrModelSecond=$this->createModelExtension($aModelIterator);
+		
 		$arrSecond = $this->extensionVersionSort($arrModelSecond);
 		$arrSecond = $this->createVersionSelect($arrSecond);
-				
-		$this->view->variables()->set('arrSecond',$arrSecond) ;
+		
+		
+		$arrExtensionsChunk = array();
+		$arrExtensionsChunk = $this->getExtensionsChunk($arrSecond,$nPerPageRowNumber=10);
+		
+		$arrExtensionsPerPage = $this->getExtensionsPerPage($arrExtensionsChunk,1);
+		$this->view->variables()->set('arrSecond',$arrExtensionsPerPage) ;
+		
+		$this->setPaginatorTester(count($arrSecond));
+		
+		if($this->params['paginator'])
+		{
+			$nPerPageRowNumber = 10;
+			$iCurrentPageNum = $this->params['paginator'];
+			$arrExtensionsChunk = array();
+			$arrExtensionsChunk = $this->getExtensionsChunk($arrSecond,$nPerPageRowNumber);
+			
+			$arrExtensionsPerPage = $this->getExtensionsPerPage($arrExtensionsChunk,$iCurrentPageNum);
+			$this->view->variables()->set('arrSecond',$arrExtensionsPerPage) ;
+		}
 	}
 	
 	//扩展排序，最新版本在前
@@ -236,5 +261,40 @@ class Index extends Controller
 		}
 		
 		return $arrModelSecond;
+	}
+	
+	public function getExtentionsChunk($arrModelSecondNumber,$nPerPageRowNumber=15)
+	{
+		return array_chunk($arrModelSecondNumber,$nPerPageRowNumber);
+	}
+	
+	public function setSelectPageExtension($arrModelSecondNumber,$nNumberRow,$nPerPageRowNumber=20)
+	{
+		foreach($arrModelSecondNumber[$nNumberRow/$nPerPageRowNumber] as $key=>$value)
+		{
+			$arrModelSecondPerPage[$value['index']] = $value['ext'] ;
+		}
+		return $arrModelSecondPerPage;
+	}
+	
+	public function setPaginatorTester($nTotal)
+	{
+		$nPerPageRowNumber = 10 ;
+	
+		$aPaginaltorTester = new PaginaltorTester();
+		$aPaginaltorTester->setTotalCount($nTotal);
+	
+		$this->view->widget('paginator')->setPaginal($aPaginaltorTester);
+		$this->view->widget('paginator')->setPerPageCount($nPerPageRowNumber);
+	}
+	
+	public function getExtensionsChunk($arrLangTranslationSelect,$nPerPageRowNumber=10)
+	{
+		return array_chunk($arrLangTranslationSelect,$nPerPageRowNumber);
+	}
+	
+	public function getExtensionsPerPage($arrExtensionsChunk,$iCurrentPageNum)
+	{
+		return $arrExtensionsChunk[$iCurrentPageNum-1];
 	}
 }

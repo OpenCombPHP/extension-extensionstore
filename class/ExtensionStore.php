@@ -27,14 +27,15 @@ class ExtensionStore extends Extension
 		$aAccessRouter->setDefaultController("org\\opencomb\\extensionstore\\index\\Index") ;
 		
 		// 注册菜单build事件的处理函数
-		Menu::registerBuildHandle(
-			'org\\opencomb\\coresystem\\mvc\\controller\\ControlPanelFrame', 'frameView' , 'mainMenu'
-			, array(__CLASS__,'buildControlPanelMenu')
-		) ;
-		Menu::registerBuildHandle(
-			'org\\opencomb\\coresystem\\mvc\\controller\\FrontFrame', 'frameView' , 'mainMenu'
-			, array(__CLASS__,'buildFrontFrameMenu')
-		) ;
+// 		Menu::registerBuildHandle(
+// 			'org\\opencomb\\coresystem\\mvc\\controller\\ControlPanelFrame', 'frameView' , 'mainMenu'
+// 			, array(__CLASS__,'buildControlPanelMenu')
+// 		) ;
+// 		Menu::registerBuildHandle(
+// 			'org\\opencomb\\coresystem\\mvc\\controller\\FrontFrame', 'frameView' , 'mainMenu'
+// 			, array(__CLASS__,'buildFrontFrameMenu')
+// 		) ;
+		
 	}
 
 
