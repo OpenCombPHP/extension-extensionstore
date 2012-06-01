@@ -8,7 +8,6 @@ use org\opencomb\extensionstore\extension\TopList;
 use org\jecat\framework\util\Version;
 use org\opencomb\platform\ext\ExtensionManager;
 use org\opencomb\platform\ext\Extension;
-use org\jecat\framework\mvc\view\widget\paginator\PaginaltorTester;
 
 class Index extends Controller
 {
@@ -71,7 +70,8 @@ class Index extends Controller
 		$arrExtensionsPerPage = $this->getExtensionsPerPage($arrExtensionsChunk,1);
 		$this->view->variables()->set('arrSecond',$arrExtensionsPerPage) ;
 		*/
-		$this->setPaginatorTester(count($arrSecond));
+		
+		$this->setPaginator(count($arrSecond));
 		
 		if($this->params['paginator'])
 		{
@@ -278,14 +278,10 @@ class Index extends Controller
 		return $arrModelSecondPerPage;
 	}
 	
-	public function setPaginatorTester($nTotal)
+	public function setPaginator($nTotal)
 	{
 		$nPerPageRowNumber = 10 ;
-	
-		$aPaginaltorTester = new PaginaltorTester();
-		$aPaginaltorTester->setTotalCount($nTotal);
-	
-		$this->view->widget('paginator')->setPaginal($aPaginaltorTester);
+		$this->view->widget('paginator')->setTotalCount($nTotal);
 		$this->view->widget('paginator')->setPerPageCount($nPerPageRowNumber);
 	}
 	
