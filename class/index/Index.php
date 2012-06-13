@@ -40,8 +40,6 @@ class Index extends Controller
 						)
 				),
 		);	
-		
-		//$this->location('http://app.qs.local.com/?c=index',0);
 		$this->setCatchOutput(false) ;
 		return $arrBean;
 	}
@@ -62,14 +60,6 @@ class Index extends Controller
 		$arrSecond = $this->extensionVersionSort($arrModelSecond);
 		$arrSecond = $this->createVersionSelect($arrSecond);
 		$this->view->variables()->set('arrSecond',$arrSecond) ;
-		
-		/*
-		$arrExtensionsChunk = array();
-		$arrExtensionsChunk = $this->getExtensionsChunk($arrSecond,$nPerPageRowNumber=10);
-		
-		$arrExtensionsPerPage = $this->getExtensionsPerPage($arrExtensionsChunk,1);
-		$this->view->variables()->set('arrSecond',$arrExtensionsPerPage) ;
-		*/
 		
 		$this->setPaginator(count($arrSecond));
 		

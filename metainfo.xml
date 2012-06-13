@@ -28,7 +28,6 @@
 	<require type="platform"><![CDATA[ >=0.1 ]]></require>
 	
 	<!-- 依赖其他扩展-->
-	<require type="extension" item="oauth/0.1"><![CDATA[ >=0.1 ]]></require>
-	<require type="extension" item="doccenter/0.1"><![CDATA[ >=0.1 ]]></require>
+	<require type="extension" item="doccenter"><![CDATA[ >=0.1 ]]></require>
 	
 </Extension>

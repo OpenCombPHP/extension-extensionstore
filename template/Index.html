@@ -6,7 +6,6 @@
 
 <script type="text/javascript">
 	jQuery(document).ready(function(){
-			var host = "http://oc.qs.local.com/?c=org.opencomb.coresystem.system.ExtensionStoreJsonp";
 			jQuery.ajax({
 				type : 'GET',
 				cache : false,
@@ -19,16 +18,8 @@
 			});	
 	});
 	
-	/*
-	function setupCheck(data)
-	{
-		var TagList = jQuery('#extensionSetup').find('div[attrFlag]');
-		jQuery(TagList).each(function(){
-			
-			console.log(this.getAttributeNode('attrFlag'));
-		});
-	}
-	*/
+
+
 	
 	
 	function setupCheck(data)
@@ -38,7 +29,6 @@
 		
 		for(var i=0;i<TagList.length;i++)
 		{	
-			//console.log(TagList[i]);
 			if(TagList[i].hasAttribute('attr.Flag'))
 			{	
 				if(TagList[i].getAttributeNode('attr.Flag').value==1)
