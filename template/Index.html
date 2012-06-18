@@ -17,11 +17,7 @@
 				}
 			});	
 	});
-	
 
-
-	
-	
 	function setupCheck(data)
 	{
 		var aExtensionSteup = document.getElementById('extensionSetup');
@@ -41,7 +37,6 @@
 							{	
 								document.getElementById(item+TagList[i].getAttributeNode('attr.version').value+"setup").style.display='';
 							}else if(data[item].compareversion<TagList[i].getAttributeNode('attr.versionBit').value){
-								console.log(TagList[i].getAttributeNode('attr.version').value);
 								document.getElementById(item+TagList[i].getAttributeNode('attr.version').value+"update").style.display='';
 							}else{
 								document.getElementById(item+TagList[i].getAttributeNode('attr.version').value+"installed").style.display='';
