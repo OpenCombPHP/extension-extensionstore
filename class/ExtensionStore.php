@@ -47,13 +47,13 @@ class ExtensionStore extends Extension
 				, BeanFactory::singleton()->findConfig('widget/control-panel-frame-menu','extensionstore')
 		) ;
 	}
-	static public function buildFrontFrameMenu(array & $arrConfig)
-	{
-		// 调用原始原始函数
-		$aSetting = \org\jecat\framework\system\Application::singleton()->extensions()->extension('extensionstore')->setting() ;
-		$arrMenus = $aSetting->item('/menu/mainmenu','mainmenu',array()) ;
+// 	static public function buildFrontFrameMenu(array & $arrConfig)
+// 	{
+// 		// 调用原始原始函数
+// 		$aSetting = \org\jecat\framework\system\Application::singleton()->extensions()->extension('extensionstore')->setting() ;
+// 		$arrMenus = $aSetting->item('/menu/mainmenu','mainmenu',array()) ;
 		
-		// 合并配置数组，增加菜单
-		BeanFactory::mergeConfig( $arrConfig, $arrMenus ) ;
-	}
+// 		// 合并配置数组，增加菜单
+// 		BeanFactory::mergeConfig( $arrConfig, $arrMenus ) ;
+// 	}
 }

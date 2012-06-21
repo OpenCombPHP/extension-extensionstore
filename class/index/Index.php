@@ -8,44 +8,28 @@ use org\opencomb\extensionstore\extension\TopList;
 use org\jecat\framework\util\Version;
 use org\opencomb\platform\ext\ExtensionManager;
 use org\opencomb\platform\ext\Extension;
+use org\jecat\framework\mvc\model\Model;
 
 class Index extends Controller
 {
-	public function createBeanConfig()
-	{
-		$arrBean = array(
-				'title'=>'首页',
-				'view'=>array(
-					'template'=>'Index.html',
-					'class'=>'view',
-					//'model'=>'extension',
-					'widget:paginator' => array(
-								'class' => 'paginator' ,
-// 								'count'=>2, //每页5项
-// 								'nums' =>5, //显示5个页码
-					) ,
-				),
-				'model:extension'=>array(
-						'class'=>'model',
-						'list'=>'true',
-						'orm'=>array(
-								'limit'=>20,
-								'table'=>'extension',
-								//建立hasMany关系
-								'hasMany:dependence'=>array(
-										'fromkeys'=>array( 'ext_name','ext_version_int'),
-										'tokeys'=>array( 'ext_name','ext_version_int'),
-										'table'=>'dependence',
-								)
-						)
-				),
-		);	
-		$this->setCatchOutput(false) ;
-		return $arrBean;
-	}
+	protected $arrConfig = array(
+					'title'=>'首页',
+					'view'=>array(
+						'template'=>'Index.html',
+						'class'=>'view',
+						'widget:paginator' => array(
+									'class' => 'paginator' ,
+	// 								'count'=>2, //每页5项
+	// 								'nums' =>5, //显示5个页码
+						) ,
+					),
+				);
 
 	public function process()
 	{
+		$extensionModel = Model::create('extensionstore:extension')
+		->hasMany('extensionstore:dependence',array('ext_name','ext_version_int'),array('ext_name','ext_version_int'));
+		
 		if(strchr($_SERVER['REQUEST_URI'],'&setupHost'))
 		{
 			$bFlagBack=true;
@@ -53,8 +37,9 @@ class Index extends Controller
 			$this->view->variables()->set('bFlagBack',$bFlagBack) ;
 		};
 		
-		$this->modelExtension->load();
-		$aModelIterator = $this->extension->childIterator();
+		$extensionModel->load();//var_dump($extensionModel);exit;
+		$aModelIterator = $extensionModel;
+		//$aModelIterator = $this->extension->childIterator();
 		$arrModelSecond=$this->createModelExtension($aModelIterator);
 		
 		$arrSecond = $this->extensionVersionSort($arrModelSecond);
@@ -154,61 +139,60 @@ class Index extends Controller
 	{
 		$arrModelFirst=array();
 		foreach($aModelIterator as $key=>$aModel)
-		{
-			$arrModelFirst[$key]=array('eid'=>$aModel->data('eid'),'extname'=>$aModel->data('ext_name'),'title'=>$aModel->data('title')
-					,'description'=>$aModel->data('description'),'createtime'=>$aModel->data('createTime')
-					,'version'=>$aModel->data('version'),'extversion_int'=>Version::from32Integer($aModel->data('ext_version_int'))->toString()
-					,'32version'=>$aModel->data('ext_version_int')
-					,'author'=>$aModel->data('author'),'orginname'=>$aModel->data('orginname')
-					,'pkgUrl'=>$aModel->data('pkgUrl'),'size'=>$aModel->data('size')
-					,'type'=>$aModel->data('type')
-					,'dependence'=>array(),'descriptionless'=>mb_substr($aModel->data('description'), 0,13,'utf-8')
+		{	//var_dump($aModel);
+			$arrModelFirst[$key]=array('eid'=>$aModel['eid'],'extname'=>$aModel['ext_name'],'title'=>$aModel['title']
+					,'description'=>$aModel['description'],'createtime'=>$aModel['createTime']
+					,'version'=>$aModel['version'],'extversion_int'=>Version::from32Integer($aModel['ext_version_int'])->toString()
+					,'32version'=>$aModel['ext_version_int']
+					,'author'=>$aModel['author'],'orginname'=>$aModel['orginname']
+					,'pkgUrl'=>$aModel['pkgUrl'],'size'=>$aModel['size']
+					,'type'=>$aModel['type']
+					,'dependence'=>array(),'descriptionless'=>mb_substr($aModel['description'], 0,13,'utf-8')
 			);
 			
-			foreach($aModel->child('dependence')->childIterator() as $adependence)
+			foreach($aModel['dependence'] as $adependence)
 			{
-				
-				switch($adependence->data('type'))
+				switch($adependence['dependence.type'])
 				{
 					case 'language';
-						$arrModelFirst[$key]['dependence'][]=array('type'=>$adependence->data('type'),'itemname'=>$adependence->data('itemname')
-								,'low'=>Version::from32Integer($adependence->data('low'))->toString()
-								,'high'=>$adependence->data('high')==null ?null :Version::from32Integer($adependence->data('high'))->toString()
-								,'lowcompare'=>$adependence->data('lowcompare'),'highcompare'=>$adependence->data('highcompare')
+						$arrModelFirst[$key]['dependence'][]=array('type'=>$adependence['dependence.type'],'itemname'=>$adependence['dependence.itemname']
+								,'low'=>Version::from32Integer($adependence['dependence.low'])->toString()
+								,'high'=>$adependence['dependence.high']==null ?null :Version::from32Integer($adependence['dependence.high'])->toString()
+								,'lowcompare'=>$adependence['dependence.lowcompare'],'highcompare'=>$adependence['dependence.highcompare']
 								,'typeCh'=>'语言','itemnameCh'=>null
 						);
 						break;
 					case 'language_module';
-						$arrModelFirst[$key]['dependence'][]=array('type'=>$adependence->data('type'),'itemname'=>$adependence->data('itemname')
-								,'low'=>Version::from32Integer($adependence->data('low'))->toString()
-								,'high'=>$adependence->data('high')==null ?null :Version::from32Integer($adependence->data('high'))->toString()
-								,'lowcompare'=>$adependence->data('lowcompare'),'highcompare'=>$adependence->data('highcompare')
+						$arrModelFirst[$key]['dependence'][]=array('type'=>$adependence['dependence.type'],'itemname'=>$adependence['dependence.itemname']
+								,'low'=>Version::from32Integer($adependence['dependence.low'])->toString()
+								,'high'=>$adependence['dependence.high']==null ?null :Version::from32Integer($adependence['dependence.high'])->toString()
+								,'lowcompare'=>$adependence['dependence.lowcompare'],'highcompare'=>$adependence['dependence.highcompare']
 								,'typeCh'=>'语言模块','itemnameCh'=>null
 						);
 						break;
 					case 'framework';
-						$arrModelFirst[$key]['dependence'][]=array('type'=>$adependence->data('type'),'itemname'=>$adependence->data('itemname')
-								,'low'=>Version::from32Integer($adependence->data('low'))->toString()
-								,'high'=>$adependence->data('high')==null ?null :Version::from32Integer($adependence->data('high'))->toString()
-								,'lowcompare'=>$adependence->data('lowcompare'),'highcompare'=>$adependence->data('highcompare')
+						$arrModelFirst[$key]['dependence'][]=array('type'=>$adependence['dependence.type'],'itemname'=>$adependence['dependence.itemname']
+								,'low'=>Version::from32Integer($adependence['dependence.low'])->toString()
+								,'high'=>$adependence['dependence.high']==null ?null :Version::from32Integer($adependence['dependence.high'])->toString()
+								,'lowcompare'=>$adependence['dependence.lowcompare'],'highcompare'=>$adependence['dependence.highcompare']
 								,'typeCh'=>'支持框架','itemnameCh'=>'蜂巢框架'
 						);
 						break;
 					case 'platform';
-						$arrModelFirst[$key]['dependence'][]=array('type'=>$adependence->data('type'),'itemname'=>$adependence->data('itemname')
-								,'low'=>Version::from32Integer($adependence->data('low'))->toString()
-								,'high'=>$adependence->data('high')==null ?null :Version::from32Integer($adependence->data('high'))->toString()
-								,'lowcompare'=>$adependence->data('lowcompare'),'highcompare'=>$adependence->data('highcompare')
+						$arrModelFirst[$key]['dependence'][]=array('type'=>$adependence['dependence.type'],'itemname'=>$adependence['dependence.itemname']
+								,'low'=>Version::from32Integer($adependence['dependence.low'])->toString()
+								,'high'=>$adependence['dependence.high']==null ?null :Version::from32Integer($adependence['dependence.high'])->toString()
+								,'lowcompare'=>$adependence['dependence.lowcompare'],'highcompare'=>$adependence['dependence.highcompare']
 								,'typeCh'=>'平台','itemnameCh'=>'蜂巢平台'
 						);
 						break;
 					case 'extension';
 						
-						$aExt=Extension::flyweight($adependence->data('itemname'));
-						$arrModelFirst[$key]['dependence'][]=array('type'=>$adependence->data('type'),'itemname'=>$adependence->data('itemname')
-								,'low'=>Version::from32Integer($adependence->data('low'))->toString()
-								,'high'=>$adependence->data('high')==null ?null :Version::from32Integer($adependence->data('high'))->toString()
-								,'lowcompare'=>$adependence->data('lowcompare'),'highcompare'=>$adependence->data('highcompare')
+						$aExt = Extension::flyweight($adependence['dependence.itemname']);
+						$arrModelFirst[$key]['dependence'][]=array('type'=>$adependence['dependence.type'],'itemname'=>$adependence['dependence.itemname']
+								,'low'=>Version::from32Integer($adependence['dependence.low'])->toString()
+								,'high'=>$adependence['dependence.high']==null ?null :Version::from32Integer($adependence['dependence.high'])->toString()
+								,'lowcompare'=>$adependence['dependence.lowcompare'],'highcompare'=>$adependence['dependence.highcompare']
 								,'typeCh'=>'扩展','itemnameCh'=>$aExt->metainfo()->title()==null ? null :$aExt->metainfo()->title()
 						);
 						break;	

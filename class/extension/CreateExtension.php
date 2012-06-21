@@ -17,64 +17,113 @@ use org\jecat\framework\lang\Exception;
 use org\jecat\framework\mvc\model\db\Category;
 use org\jecat\framework\mvc\view\DataExchanger;
 use org\jecat\framework\message\Message;
+use org\jecat\framework\mvc\model\Model;
 
 class CreateExtension extends Controller
 {
-	public function createBeanConfig()
-	{
-		$this->setCatchOutput(false) ;
-		return array(
-			'title'=>'提交扩展',
-			'view'=>array(
-				'template'=>'ExtensionForm.html',
-				'class'=>'form',
-				'model'=>'extension',
-				'widgets'=>array(
-					array(
-						'config'=>'widget/extension_cat'
+	protected $arrConfig = array(
+				'title'=>'提交扩展',
+				'view'=>array(
+					'template'=>'ExtensionForm.html',
+					'class'=>'view',
+					'widgets'=>array(
+						array(
+							'config'=>'widget/extension_cat'
+						),
 					),
-				),
-			),
-			'model:extension'=>array(
-				'class'=>'model',
-				'orm'=>array(
-					'table'=>'extension',
-					'hasMany:dependence' => array (
-						'fromkeys' => array ( 'ext_name','ext_version_int'),
-						'tokeys' => array ( 'ext_name','ext_version_int'),
-						'table' => 'dependence',
-					)
-				),
-			),
-			'model:dependence'=>array(
-				'class'=>'model',
-				'list'=>true,
-				'orm'=>array(
-						'limit'=>20,
-						'table'=>'dependence',
-				),
-			),
-		);
-	}
+				)
+			);
+	
+// 	public function createBeanConfig()
+// 	{
+// 		$this->setCatchOutput(false) ;
+// 		return array(
+// 			'title'=>'提交扩展',
+// 			'view'=>array(
+// 				'template'=>'ExtensionForm.html',
+// 				'class'=>'form',
+// 				'model'=>'extension',
+// 				'widgets'=>array(
+// 					array(
+// 						'config'=>'widget/extension_cat'
+// 					),
+// 				),
+// 			),
+// 			'model:extension'=>array(
+// 				'class'=>'model',
+// 				'orm'=>array(
+// 					'table'=>'extension',
+// 					'hasMany:dependence' => array (
+// 						'fromkeys' => array ( 'ext_name','ext_version_int'),
+// 						'tokeys' => array ( 'ext_name','ext_version_int'),
+// 						'table' => 'dependence',
+// 					)
+// 				),
+// 			),
+// 			'model:dependence'=>array(
+// 				'class'=>'model',
+// 				'list'=>true,
+// 				'orm'=>array(
+// 						'limit'=>20,
+// 						'table'=>'dependence',
+// 				),
+// 			),
+// 		);
+// 	}
 	
 	public function process()
-	{
+	{	
+		$extensionModel = Model::create('extensionstore:extension')
+		->hasMany('extensionstore:dependence',array('ext_name','ext_version_int'),array('ext_name','ext_version_int'));
+		
+// 		$extensionModel->insert(array(
+// 					'createTime' => time(),
+// 					'author' => IdManager::singleton()->currentUserId()
+// 				)
+// 			);
+// 		exit;
+		
+		$extensionModel->setData('createTime',time());
+		
+		$extensionModel->setData('author',IdManager::singleton()->currentUserId());
+		
+		$extensionModel->insert();exit;
+		
+		
+		
 		//权限
 		$aId = $this->requireLogined();
 		
 		$this->view->variables()->set('page_h1',"提交扩展") ;
 		$this->view->variables()->set('save_button',"发布扩展") ;
 		
-		$this->doActions();
+		//$this->doActions();
 	}
 	
-	public function actionSubmit()
-	{	
+	
+	
+	public function form()
+	{	exit;
 		//$this->extension->printStruct();
 		//记录创建时间
-		$this->extension->setData('createTime',time());
+		$extensionModel = Model::create('extensionstore:extension')
+		->hasMany('extensionstore:dependence',array('ext_name','ext_version_int'),array('ext_name','ext_version_int'));
+		
+		$extensionModel->setData('createTime',time());
+		
+		$extensionModel->setData('author',IdManager::singleton()->currentUserId());
+		
+		$extensionModel->update();exit;
+		
+		$extensionModel->update(array(
+						'createTime' => time(),
+						'author' => IdManager::singleton()->currentUserId()
+					)
+				);
+		
+		//$this->extension->setData('createTime',time());
 		//记录作者
-		$this->extension->setData('author',IdManager::singleton()->currentUserId());
+		//$this->extension->setData('author',IdManager::singleton()->currentUserId());
 		
 		if($this->params->has('extension_files'))
 		{
@@ -82,7 +131,6 @@ class CreateExtension extends Controller
 
 			$aStoreFolder = Extension::flyweight('extensionstore')->FilesFolder();
 				
-	
 				$sFileTempName = $ExtensionFiles['tmp_name'];
 				$sFileType = $ExtensionFiles['type'];
 				$sFileSize = $ExtensionFiles['size'];
@@ -206,7 +254,7 @@ class CreateExtension extends Controller
 				$this->dependence->setData('high',empty($aHigh)?null:$aHigh->to32Integer());
 				$this->dependence->setData('lowcompare',$item->versionScope()->lowCompare());
 				$this->dependence->setData('highcompare',$item->versionScope()->highCompare());
-				$this->dependence->save ();
+				$this->dependence->update ();
 				break ;
 				case 'language_module';
 				$this->dependence->setData('did',null);
