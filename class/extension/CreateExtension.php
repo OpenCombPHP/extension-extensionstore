@@ -71,62 +71,36 @@ class CreateExtension extends Controller
 // 		);
 // 	}
 	
-	public function process()
+	public function dd()
 	{	
-		$extensionModel = Model::create('extensionstore:extension')
-		->hasMany('extensionstore:dependence',array('ext_name','ext_version_int'),array('ext_name','ext_version_int'));
-		
-// 		$extensionModel->insert(array(
-// 					'createTime' => time(),
-// 					'author' => IdManager::singleton()->currentUserId()
-// 				)
-// 			);
-// 		exit;
-		
-		$extensionModel->setData('createTime',time());
-		
-		$extensionModel->setData('author',IdManager::singleton()->currentUserId());
-		
-		$extensionModel->insert();exit;
-		
-		
-		
 		//权限
 		$aId = $this->requireLogined();
 		
 		$this->view->variables()->set('page_h1',"提交扩展") ;
 		$this->view->variables()->set('save_button',"发布扩展") ;
 		
-		//$this->doActions();
 	}
 	
-	
-	
-	public function form()
-	{	exit;
-		//$this->extension->printStruct();
-		//记录创建时间
+	public function process()
+	{	
+		//权限
+		$aId = $this->requireLogined();
+		
+		$this->view->variables()->set('page_h1',"提交扩展") ;
+		$this->view->variables()->set('save_button',"发布扩展") ;
+		
+		
 		$extensionModel = Model::create('extensionstore:extension')
 		->hasMany('extensionstore:dependence',array('ext_name','ext_version_int'),array('ext_name','ext_version_int'));
 		
+		//记录创建时间
 		$extensionModel->setData('createTime',time());
 		
+		//记录作者
 		$extensionModel->setData('author',IdManager::singleton()->currentUserId());
 		
-		$extensionModel->update();exit;
-		
-		$extensionModel->update(array(
-						'createTime' => time(),
-						'author' => IdManager::singleton()->currentUserId()
-					)
-				);
-		
-		//$this->extension->setData('createTime',time());
-		//记录作者
-		//$this->extension->setData('author',IdManager::singleton()->currentUserId());
-		
 		if($this->params->has('extension_files'))
-		{
+		{	//exit;
 			$ExtensionFiles = $this->params->get('extension_files');
 
 			$aStoreFolder = Extension::flyweight('extensionstore')->FilesFolder();
@@ -204,20 +178,20 @@ class CreateExtension extends Controller
 				$arrIndexs = explode(',', $this->params->get('extension_files_index'));
 				
 			
-				$this->extension->setData('version',$sExtensionVersionString);
-				$this->extension->setData('ext_version_int',$aExtMetainfo->version()->to32Integer());
-				$this->extension->setData('ext_name',$sExtensionName);
-				$this->extension->setData('title',$sExtensionTitle);
-				$this->extension->setData('description',$sExtensionDec);
-				$this->extension->setData('orginname' , $sExtensionName . '-' . $sExtensionVersionString . '.' . 'zip');
-				$this->extension->setData('pkgUrl' , $sSavedFile); 
-				$this->extension->setData('size' , $sFileSize );
-				$this->extension->setData('ty$aExtMetainfope' , $sFileType );
+				$extensionModel->setData('version',$sExtensionVersionString);
+				$extensionModel->setData('ext_version_int',$aExtMetainfo->version()->to32Integer());
+				$extensionModel->setData('ext_name',$sExtensionName);
+				$extensionModel->setData('title',$sExtensionTitle);
+				$extensionModel->setData('description',$sExtensionDec);
+				$extensionModel->setData('orginname' , $sExtensionName . '-' . $sExtensionVersionString . '.' . 'zip');
+				$extensionModel->setData('pkgUrl' , $sSavedFile); 
+				$extensionModel->setData('size' , $sFileSize );
+				$extensionModel->setData('ty$aExtMetainfope' , $sFileType );
 			}
 		/*           end 处理附件             */
 		try{
-			if ($this->extension->save ())
-			{
+			if ($extensionModel->insert ())
+			{	
 				$this->setDependence($aExtMetainfo,$sExtensionVersionString,$sExtensionName);
 				$this->messageQueue ()->create ( Message::success, "扩展保存成功" );
 			}
@@ -237,81 +211,83 @@ class CreateExtension extends Controller
 		
 		$nVersionInt = Version::fromString($sExtensionVersionString);
 		
+		$dependenceModel = Model::create('extensionstore:dependence');
+		
 		foreach($aExtensionDependence->iterator() as $item)
 		{
-			$this->dependence->load();
+			$dependenceModel->load();
 			switch ($item->type())
 			{
 				case 'language';
-				$this->dependence->setData('did',null);
-				$this->dependence->setData('ext_name',$sExtensionName);
-				$this->dependence->setData('ext_version_int',$aExtMetainfo->version()->to32Integer());
-				$this->dependence->setData('type',$item->type());
-				$this->dependence->setData('itemname','php');
+				$dependenceModelsetData('did',null);
+				$dependenceModelsetData('ext_name',$sExtensionName);
+				$dependenceModelsetData('ext_version_int',$aExtMetainfo->version()->to32Integer());
+				$dependenceModelsetData('type',$item->type());
+				$dependenceModelsetData('itemname','php');
 				$aLow=$item->versionScope()->low();
-				$this->dependence->setData('low',empty($aLow)?null:$aLow->to32Integer());
+				$dependenceModelsetData('low',empty($aLow)?null:$aLow->to32Integer());
 				$aHigh=$item->versionScope()->high();
-				$this->dependence->setData('high',empty($aHigh)?null:$aHigh->to32Integer());
-				$this->dependence->setData('lowcompare',$item->versionScope()->lowCompare());
-				$this->dependence->setData('highcompare',$item->versionScope()->highCompare());
-				$this->dependence->update ();
+				$dependenceModelsetData('high',empty($aHigh)?null:$aHigh->to32Integer());
+				$dependenceModelsetData('lowcompare',$item->versionScope()->lowCompare());
+				$dependenceModelsetData('highcompare',$item->versionScope()->highCompare());
+				$dependenceModel->insert();
 				break ;
 				case 'language_module';
-				$this->dependence->setData('did',null);
-				$this->dependence->setData('ext_name',$sExtensionName);
-				$this->dependence->setData('ext_version_int',$aExtMetainfo->version()->to32Integer());
-				$this->dependence->setData('type',$item->type());
-				$this->dependence->setData('itemname',$item->itemName());
+				$dependenceModelsetData('did',null);
+				$dependenceModelsetData('ext_name',$sExtensionName);
+				$dependenceModelsetData('ext_version_int',$aExtMetainfo->version()->to32Integer());
+				$dependenceModelsetData('type',$item->type());
+				$dependenceModelsetData('itemname',$item->itemName());
 				$aLow=$item->versionScope()->low();
-				$this->dependence->setData('low',empty($aLow)?null:$aLow->to32Integer());
+				$dependenceModelsetData('low',empty($aLow)?null:$aLow->to32Integer());
 				$aHigh=$item->versionScope()->high();
-				$this->dependence->setData('high',empty($aHigh)?null:$aHigh->to32Integer());
-				$this->dependence->setData('lowcompare',$item->versionScope()->lowCompare());
-				$this->dependence->setData('highcouse org\opencomb\platform\ext\ExtensionMetainfo;
+				$dependenceModelsetData('high',empty($aHigh)?null:$aHigh->to32Integer());
+				$dependenceModelsetData('lowcompare',$item->versionScope()->lowCompare());
+				$dependenceModelsetData('highcouse org\opencomb\platform\ext\ExtensionMetainfo;
 						mpare',$item->versionScope()->highCompare());
-				$this->dependence->save ();
+				$dependenceModel->insert();
 				break;
 				case 'framework';
-				$this->dependence->setData('did',null);
-				$this->dependence->setData('ext_name',$sExtensionName);
-				$this->dependence->setData('ext_version_int',$aExtMetainfo->version()->to32Integer());
-				$this->dependence->setData('type',$item->type());
-				$this->dependence->setData('itemname','framework');
+				$dependenceModelsetData('did',null);
+				$dependenceModelsetData('ext_name',$sExtensionName);
+				$dependenceModelsetData('ext_version_int',$aExtMetainfo->version()->to32Integer());
+				$dependenceModelsetData('type',$item->type());
+				$dependenceModelsetData('itemname','framework');
 				$aLow=$item->versionScope()->low();
-				$this->dependence->setData('low',empty($aLow)?null:$aLow->to32Integer());
+				$dependenceModelsetData('low',empty($aLow)?null:$aLow->to32Integer());
 				$aHigh=$item->versionScope()->high();
-				$this->dependence->setData('high',empty($aHigh)?null:$aHigh->to32Integer());
-				$this->dependence->setData('lowcompare',$item->versionScope()->lowCompare());
-				$this->dependence->setData('highcompare',$item->versionScope()->highCompare());
-				$this->dependence->save ();
+				$dependenceModelsetData('high',empty($aHigh)?null:$aHigh->to32Integer());
+				$dependenceModelsetData('lowcompare',$item->versionScope()->lowCompare());
+				$dependenceModelsetData('highcompare',$item->versionScope()->highCompare());
+				$dependenceModel->insert();
 				break;
 				case 'platform';
-				$this->dependence->setData('did',null);
-				$this->dependence->setData('ext_name',$sExtensionName);
-				$this->dependence->setData('ext_version_int',$aExtMetainfo->version()->to32Integer());
-				$this->dependence->setData('type',$item->type());
-				$this->dependence->setData('itemname','opencomb');
+				$dependenceModelsetData('did',null);
+				$dependenceModelsetData('ext_name',$sExtensionName);
+				$dependenceModelsetData('ext_version_int',$aExtMetainfo->version()->to32Integer());
+				$dependenceModelsetData('type',$item->type());
+				$dependenceModelsetData('itemname','opencomb');
 				$aLow=$item->versionScope()->low();
-				$this->dependence->setData('low',empty($aLow)?null:$aLow->to32Integer());
+				$dependenceModelsetData('low',empty($aLow)?null:$aLow->to32Integer());
 				$aHigh=$item->versionScope()->high();
-				$this->dependence->setData('high',empty($aHigh)?null:$aHigh->to32Integer());
-				$this->dependence->setData('lowcompare',$item->versionScope()->lowCompare());
-				$this->dependence->setData('highcompare',$item->versionScope()->highCompare());
-				$this->dependence->save ();
+				$dependenceModelsetData('high',empty($aHigh)?null:$aHigh->to32Integer());
+				$dependenceModelsetData('lowcompare',$item->versionScope()->lowCompare());
+				$dependenceModelsetData('highcompare',$item->versionScope()->highCompare());
+				$dependenceModel->insert();
 				break;
 				case 'extension';
-				$this->dependence->setData('did',null);
-				$this->dependence->setData('ext_name',$sExtensionName);
-				$this->dependence->setData('ext_version_int',$aExtMetainfo->version()->to32Integer());
-				$this->dependence->setData('type',$item->type());
-				$this->dependence->setData('itemname',$item->itemName());
+				$dependenceModelsetData('did',null);
+				$dependenceModelsetData('ext_name',$sExtensionName);
+				$dependenceModelsetData('ext_version_int',$aExtMetainfo->version()->to32Integer());
+				$dependenceModelsetData('type',$item->type());
+				$dependenceModelsetData('itemname',$item->itemName());
 				$aLow=$item->versionScope()->low();
-				$this->dependence->setData('low',empty($aLow)?null:$aLow->to32Integer());
+				$dependenceModelsetData('low',empty($aLow)?null:$aLow->to32Integer());
 				$aHigh=$item->versionScope()->high();
-				$this->dependence->setData('high',empty($aHigh)?null:$aHigh->to32Integer());
-				$this->dependence->setData('lowcompare',$item->versionScope()->lowCompare());
-				$this->dependence->setData('highcompare',$item->versionScope()->highCompare());
-				$this->dependence->save ();
+				$dependenceModelsetData('high',empty($aHigh)?null:$aHigh->to32Integer());
+				$dependenceModelsetData('lowcompare',$item->versionScope()->lowCompare());
+				$dependenceModelsetData('highcompare',$item->versionScope()->highCompare());
+				$dependenceModel->insert();
 				break;
 			}
 		}
