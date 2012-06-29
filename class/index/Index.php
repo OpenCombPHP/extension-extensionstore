@@ -9,6 +9,7 @@ use org\jecat\framework\util\Version;
 use org\opencomb\platform\ext\ExtensionManager;
 use org\opencomb\platform\ext\Extension;
 use org\jecat\framework\mvc\model\Model;
+use org\jecat\framework\mvc\view\View;
 
 class Index extends Controller
 {
@@ -17,11 +18,14 @@ class Index extends Controller
 					'view'=>array(
 						'template'=>'Index.html',
 						'class'=>'view',
-						'widget:paginator' => array(
+						'widgets' =>array(
+							array(
+									'id' => 'paginator',
 									'class' => 'paginator' ,
 	// 								'count'=>2, //每页5项
 	// 								'nums' =>5, //显示5个页码
-						) ,
+							),
+						)
 					),
 				);
 
@@ -255,8 +259,8 @@ class Index extends Controller
 	public function setPaginator($nTotal)
 	{
 		$nPerPageRowNumber = 10 ;
-		$this->view->widget('paginator')->setTotalCount($nTotal);
-		$this->view->widget('paginator')->setPerPageCount($nPerPageRowNumber);
+		$this->view()->widget('paginator')->setTotalCount($nTotal);
+		$this->view()->widget('paginator')->setPerPageCount($nPerPageRowNumber);
 	}
 	
 	public function getExtensionsChunk($arrLangTranslationSelect,$nPerPageRowNumber=10)

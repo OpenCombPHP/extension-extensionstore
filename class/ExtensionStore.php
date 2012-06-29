@@ -8,6 +8,7 @@ use org\jecat\framework\system\AccessRouter;
 use org\jecat\framework\lang\aop\AOP;
 use org\opencomb\platform\ext\Extension ;
 use org\jecat\framework\bean\BeanFactory;
+use org\opencomb\coresystem\mvc\controller\ControlPanel ;
 
 class ExtensionStore extends Extension
 {
@@ -35,7 +36,7 @@ class ExtensionStore extends Extension
 // 			'org\\opencomb\\coresystem\\mvc\\controller\\FrontFrame', 'frameView' , 'mainMenu'
 // 			, array(__CLASS__,'buildFrontFrameMenu')
 // 		) ;
-		
+		ControlPanel::registerMenuHandler( array(__CLASS__,'buildControlPanelMenu') ) ;
 	}
 
 
