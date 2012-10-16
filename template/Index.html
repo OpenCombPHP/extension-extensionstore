@@ -1,5 +1,6 @@
 <lib name='jquery'/>
 <css src="extensionstore:css/Index.css" />
+<css src="extensionstore:css/expand.css" />
 <resrc />
 <js src="coresystem:js/jquery-1.7.1.js"/>
 
@@ -21,7 +22,7 @@
 	{
 		var aExtensionSteup = document.getElementById('extensionSetup');
 		var TagList=aExtensionSteup.getElementsByTagName('div');
-		
+
 		for(var i=0;i<TagList.length;i++)
 		{	
 			if(TagList[i].hasAttribute('attr.Flag'))
@@ -68,7 +69,7 @@
 							{
 								if(TagList2[h].getAttributeNode('attr.Flag').value==1 )
 								{
-									
+
 									if(TagList2[h].getAttributeNode('attr.ExtName').value==TagList[i].getAttributeNode('attr.ExtName').value)
 									{
 										document.getElementById(TagList[h].getAttributeNode('attr.ExtName').value+TagList[h].getAttributeNode('attr.version').value+"uninstalled").style.display='';
@@ -77,14 +78,14 @@
 							}
 
 						}
-						
+
 					}
 				}
 			}
 		}	
 	}
-	
-	
+
+
 
 	function installExtension(iframeSrc){
 		var nZip = iframeSrc.indexOf(".zip");
@@ -92,7 +93,7 @@
 		var nHost = iframeSrc.indexOf("setupHost"); 
 		var host = iframeSrc.substring(nHost+10);
 		pkgUrl ='http://'+'{/*.url.host}'+'/'+pkgUrl;
-		showModalDialog("http://"+host+"?c=org.opencomb.coresystem.system.ExtensionDownloadSetup&rspn=noframe&pkgUrl="+pkgUrl);
+		showModalDialog("http://"+host+"?c=org.opencomb.coresystem.system.ExtensionDownloadSetup&pkgUrl="+pkgUrl);
 	}
 
 
@@ -106,7 +107,7 @@
 		document.getElementById(versionValue.substr(0,versionValue.indexOf('.'))+versionValue.substr(versionValue.indexOf('.')+1)).value=versionValue;
 		document.getElementById(versionValue).style.display="";
 	}
-	
+
 	function displayMore(descriptionMore){
 		if(document.getElementById(descriptionMore+'more').innerHTML=="更多")
 		{
@@ -120,58 +121,66 @@
 			document.getElementById(descriptionMore+'exdescriptionmore').style.height="26px";
 			document.getElementById(descriptionMore+'more').innerHTML="更多";
 		}
-		
+
 	}
-	
+
 	function displayLess(descriptionMore){
 		document.getElementById(descriptionMore+'exdescriptionless').style.display="none";
 		document.getElementById(descriptionMore+'exdescriptionmore').style.display="";
 	}
-	
+
 </script>
-<div class='addExtension' attr.Flag="5">
-	<a href='/?c=org.opencomb.extensionstore.extension.CreateExtension'>提交你的扩展!</a>
-</div>
 
 <div id="extensionSetup" attr.Flag="5">
+<div class='addExtension' attr.Flag="5">
+	<a href='/?c=org.opencomb.extensionstore.extension.CreateExtension'>提交你的扩展</a>
+	<div class="clr"></div>
+</div>
 <foreach for="$arrSecond"  key='key1' item='item1'>
+	<h6>
 	<if "count({=$item1})>1">
 		{? $i=0;}
 		<foreach for="$item1"  key='key2' item='item2'>
 			<if "$i==0">
 				<div class="extensionStore" attr.ExtName={=$key1} attr.Flag="1" attr.versionBit="{=$item2['32version']}" attr.version="{=$key2}" id="{=$key1.'.'.$key2}">
-					
+
 					<div class="extensionContent" attr.Flag="3">
-						<span style="float:left">
+						<span>
 							<h3>{=$item2['title']}</h3>
 						 </span>
 						 <span >
 							({=$item2['extname']}) ver : <font color="green">{=$item2['version']}</font>
 						 </span>
-					    <span class="extName" style="position:absolute; top:0; right:50%;">
-							<a href='javascript:void(0)' onclick="javascript:jquery('#{=$key1.$item2['32version'].'depen'}').toggle()">依赖关系</a>
-						</span>
-					    
+
+
 						<div class="extensionUse" attr.Flag="3">
+							<span class="extName">
+								<a href='javascript:void(0)' onclick="javascript:jquery('#{=$key1.$item2['32version'].'depen'}').toggle()">依赖关系</a>
+							</span>
+							<span>
 							<div class="extensionDownLoad" attr.Flag="5">
 								<a href="http://{/*.url.host}/{=$item2['pkgUrl']}">下载</a>
 							</div>
+							</span>
+							<span>
 							<div class="extensionState" attr.Flag="3">
-								<if"$bFlagBack">
-									<div id="{=$key1.$key2.'setup'}" style="display:none;" attr.Flag="2">
-										<p>已安装最新版本</p>
+								<if"{=$bFlagBack}">
+									<div id="{=$key1.$key2.'setup'}" class="extensionInstall" style="display:none;" attr.Flag="2">
+										已安装最新版本
 									</div>
-									<div id="{=$key1.$key2.'update'}" style="display:none;" attr.Flag="2">
+									<div class="extensionUp" id="{=$key1.$key2.'update'}" style="display:none;" attr.Flag="2">
 										<a href="#" onclick="installExtension('{=$item2['pkgUrl']}+{/*.url}')">升级</a>
 									</div>
-									<div id="{=$key1.$key2.'installed'}" style="display:none;" attr.Flag="2">
-										<p>已安装</p>
+									<div class="extensionInstall" id="{=$key1.$key2.'installed'}" style="display:none;" attr.Flag="2">
+										已安装
 									</div>
-									<div id="{=$key1.$key2.'uninstalled'}" style="display:none;" attr.Flag="2">
+									<div id="{=$key1.$key2.'uninstalled'}" class="extensionSetup" style="display:none;" attr.Flag="2">
 										<a href="#" onclick="installExtension('{=$item2['pkgUrl']}+{/*.url}')">安装</a>
 									</div>
 								</if>
 							</div>
+							</span>
+							<span>
 							<div class="extensionSelect" attr.Flag="6">
 								<select id="{=$key1.$key2}" onchange="selectVersion(this.options[this.options.selectedIndex].value)">
 									<foreach for="{=$item2['option']}" key='key3' item='item3'>
@@ -179,12 +188,13 @@
 									</foreach>
 								</select>
 							</div>
+							</span>
 						</div>
 					</div>
-					
+
 					<div class="extensionDependence" attr.Flag="3">
 
-						<div id="{=$key1.$item2['32version'].'depen'}" attr.Flag="4" style="display:none;background:#f2f5f7;moz-border-radius:50px;">
+						<div id="{=$key1.$item2['32version'].'depen'}" attr.Flag="4" style="display:none;">
 							<if "empty({=$item2['dependence']})">
 								无依赖关系
 							</if>
@@ -202,36 +212,38 @@
 										{=$item3['itemname']}{=$item3['lowcompare']}{=$item3['low']}<br/>
 									</if>		
 							</foreach>
+							<div class="clr"></div>
 						</div>
 					</div>
-					
+
 					<div class="extensionDescription" attr.Flag="3">
 						<div  class="extensionDescriptionMore" attr.Flag="2" id="{=$key1.$item2['32version'].'exdescriptionmore'}" >
 							<font face="verdana" size="2" colorgetAttributeNode="green">描述</font>:{=$item2['description']}
-
 						</div>
 						<a id="{=$key1.$item2['32version']}more" href='javascript:void(0)' onclick="displayMore('{=$key1.$item2['32version']}')">更多</a>
-						<span style="position:absolute; right:13px;">Date:{=date("Y-m-d", $item2['createtime'])}</span>
+						<span>Date:{=date("Y-m-d", $item2['createtime'])}</span>
+						<div class="clr"></div>
 					</div>
-					
+
 
 
 				</div>
 			<else/>
 				<div class="extensionStore"  attr.ExtName={=$key1} attr.Flag="1" attr.versionBit="{=$item2['32version']}" attr.version="{=$key2}" id="{=$key1.'.'.$key2}" style="display:none;">
 					<div class="extensionContent" attr.Flag="3">
-						<span style="float:left">
+						<span>
 							<h3>{=$item2['title']}</h3>
 						 </span>
 						 <span >
 							({=$item2['extname']}) ver : <font color="green">{=$item2['version']}</font>
 						 </span>
-					    <span class="extName" style="position:absolute; top:0; right:50%;">
-							<a href='javascript:void(0)' onclick="javascript:jquery('#{=$key1.$item2['32version'].'depen'}').toggle()">依赖关系</a>
-						</span>
-					    
-					    
+
+
+
 					    <div class="extensionUse" attr.Flag="3">
+							<span class="extName">
+							<a href='javascript:void(0)' onclick="javascript:jquery('#{=$key1.$item2['32version'].'depen'}').toggle()">依赖关系</a>
+							</span>
 					    	<span>
 								<div class="extensionDownLoad" attr.Flag="5">
 									<a href="http://{/*.url.host}/{=$item2['pkgUrl']}">下载</a>
@@ -240,16 +252,16 @@
 							<span>
 								<div class="extensionState" attr.Flag="3">
 									<if"{=$bFlagBack}">
-										<div id="{=$key1.$key2.'setup'}" style="display:none;" attr.Flag="2">
-											<p>已安装最新版本</p>
+										<div id="{=$key1.$key2.'setup'}"  class="extensionInstall" style="display:none;" attr.Flag="2">
+											已安装最新版本
 										</div>
-										<div id="{=$key1.$key2.'update'}" style="display:none;" attr.Flag="2">
+										<div class="extensionUp" id="{=$key1.$key2.'update'}" style="display:none;" attr.Flag="2">
 											<a href="#" onclick="installExtension('{=$item2['pkgUrl']}+{/*.url}')">升级</a>
 										</div>
-										<div id="{=$key1.$key2.'installed'}" style="display:none;" attr.Flag="2">
-											<p>已安装</p>
+										<div id="{=$key1.$key2.'installed'}"  class="extensionInstall" style="display:none;" attr.Flag="2">
+											已安装
 										</div>
-										<div id="{=$key1.$key2.'uninstalled'}" style="display:none;" attr.Flag="2">
+										<div id="{=$key1.$key2.'uninstalled'}" class="extensionSetup" style="display:none;" attr.Flag="2">
 											<a href="#" onclick="installExtension('{=$item2['pkgUrl']}+{/*.url}')">安装</a>
 										</div>
 									</if>
@@ -268,7 +280,7 @@
 
 					</div>
 					<div class="extensionDependence" attr.Flag="3">
-						<div id="{=$key1.$item2['32version'].'depen'}" attr.Flag="4" style="display:none;background:#f2f5f7;moz-border-radius:50px;">
+						<div id="{=$key1.$item2['32version'].'depen'}" attr.Flag="4" style="display:none;">
 							<if "empty({=$item2['dependence']})">
 								无依赖关系
 							</if>
@@ -286,38 +298,39 @@
 										{=$item3['itemname']}{=$item3['lowcompare']}{=$item3['low']}<br/>
 									</if>		
 							</foreach>
+							<div class="clr"></div>
 						</div>
 					</div>
 					<div class="extensionDescription" attr.Flag="3">
 						<div  class="extensionDescriptionMore" attr.Flag="2" id="{=$key1.$item2['32version'].'exdescriptionmore'}">
 							<font face="verdana" size="2" color="green">描述</font>:{=$item2['description']}
-
 						</div>
 						<a id="{=$key1.$item2['32version']}more" href='javascript:void(0)' onclick="displayMore('{=$key1.$item2['32version']}')">更多</a>
-						<span style="position:absolute; right:13px;">Date:{=date("Y-m-d", $item2['createtime'])}</span>
+						<span>Date:{=date("Y-m-d", $item2['createtime'])}</span>
+						<div class="clr"></div>
 					</div>
-		
+
 				</div>
 			</if>
 			{? $i++;}
-			
+
 		</foreach>
 		<else/>
 		<foreach for="$item1"  key='key2' item='item2'>
 				<div div class="extensionStore"  attr.ExtName={=$key1} attr.Flag="1" attr.versionBit="{=$item2['32version']}" attr.version="{=$key2}" id="{=$key1.'.'.$key2}">
 					<div class="extensionContent" attr.Flag="3">
-						<span style="float:left">
+						<span>
 							<h3>{=$item2['title']}</h3>
 						 </span>
 						 <span >
 							({=$item2['extname']}) ver : <font color="green">{=$item2['version']}</font>
 						 </span>
-					    <span class="extName" style="position:absolute; top:0; right:50%;">
-							<a href='javascript:void(0)' onclick="javascript:jquery('#{=$key1.$item2['32version'].'depen'}').toggle()">依赖关系</a>
-						</span>
-						
-						
+
+
 						<div class="extensionUse" attr.Flag="3">
+							<span class="extName">
+								<a href='javascript:void(0)' onclick="javascript:jquery('#{=$key1.$item2['32version'].'depen'}').toggle()">依赖关系</a>
+							</span>
 							<span>
 								<div class="extensionDownLoad"  attr.Flag="5">
 									<a href="http://{/*.url.host}/{=$item2['pkgUrl']}">下载</a>
@@ -326,16 +339,16 @@
 							<span>
 								<div class="extensionState"  attr.Flag="3">
 									<if"{=$bFlagBack}">
-										<div id="{=$key1.$key2.'setup'}" style="display:none;" attr.Flag="2">
-											<p>已安装最新版本</p>
+										<div id="{=$key1.$key2.'setup'}" class="extensionInstall" style="display:none;" attr.Flag="2">
+											已安装最新版本
 										</div>
-										<div id="{=$key1.$key2.'update'}" style="display:none;" attr.Flag="2">
+										<div class="extensionUp" id="{=$key1.$key2.'update'}" style="display:none;" attr.Flag="2">
 											<a href="#" onclick="installExtension('{=$item2['pkgUrl']}+{/*.url}')">升级</a>
 										</div>
-										<div id="{=$key1.$key2.'installed'}" style="display:none;" attr.Flag="2">
-											<p>已安装</p>
+										<div class="extensionInstall" id="{=$key1.$key2.'installed'}" style="display:none;" attr.Flag="2">
+											已安装
 										</div>
-										<div id="{=$key1.$key2.'uninstalled'}" style="display:none;" attr.Flag="2">
+										<div id="{=$key1.$key2.'uninstalled'}" class="extensionSetup" style="display:none;" attr.Flag="2">
 											<a href="#" onclick="installExtension('{=$item2['pkgUrl']}+{/*.url}')">安装</a>
 										</div>
 									</if>
@@ -353,9 +366,9 @@
 						</div>
 
 					</div>
-					
+
 					<div class="extensionDependence" attr.Flag="3">
-						<div id="{=$key1.$item2['32version'].'depen'}" attr.Flag="4" style="display:none;background:#f2f5f7;moz-border-radius:50px;">
+						<div id="{=$key1.$item2['32version'].'depen'}" attr.Flag="4" style="display:none;">
 							<if "empty({=$item2['dependence']})">
 								无依赖关系
 							</if>
@@ -373,21 +386,50 @@
 										{=$item3['itemname']}{=$item3['lowcompare']}{=$item3['low']}<br/>
 									</if>		
 							</foreach>
+							<div class="clr"></div>
 						</div>
 					</div>
-					
+
 					<div class="extensionDescription" attr.Flag="3">
 						<div  class="extensionDescriptionMore" attr.Flag="2" id="{=$key1.$item2['32version'].'exdescriptionmore'}">
 							<font face="verdana" size="2" color="green">描述</font>:{=$item2['description']}
-
 						</div>
 						<a id="{=$key1.$item2['32version']}more" href='javascript:void(0)' onclick="displayMore('{=$key1.$item2['32version']}')">更多</a>
-						<span style="position:absolute; right:13px;">Date:{=date("Y-m-d", $item2['createtime'])}</span>
+						<span>Date:{=date("Y-m-d", $item2['createtime'])}</span>
+						<div class="clr"></div>
 					</div>
 				</div>
 		</foreach>
 	</if>
+	</h6>
 </foreach>
 <div attrFlag="dd"></div>
-<widget id="paginator" attr.strategy="middle" attr.showFirst="1" attr.showLast="1" attr.showTotal="1" attr.showPre="1" attr.showNext="1" />
+
 </div>
+<script language="javascript">
+<!--  
+        function senfe(o,a,b,c,d){  
+            var t=document.getElementById(o).getElementsByTagName("h6");  
+              
+            for(var i=0;i<t.length;i++){  
+                t[i].style.background=(t[i].sectionRowIndex%2==0)?a:b;  
+                t[i].onclick=function(){  
+                    if(this.x!="1"){  
+                        this.x="1";  
+                        this.style.background=d;  
+                    }else{  
+                        this.x="0";  
+                        this.style.background=(this.sectionRowIndex%2==0)?a:b;  
+                    }  
+                }  
+                t[i].onmouseover=function(){  
+                    if(this.x!="1")this.style.background=c;  
+                }  
+                t[i].onmouseout=function(){  
+                    if(this.x!="1")this.style.background=(this.sectionRowIndex%2==0)?a:b;  
+                }  
+            }  
+        }  
+		senfe("extensionSetup","#fff","#fff","#fff url(extensions/extensionstore/0.2/public/images/Listbg.png) repeat-x bottom","#fff url(extensions/extensionstore/0.2/public/images/Listbg.png) repeat-x bottom");
+// -->
+</script>  
