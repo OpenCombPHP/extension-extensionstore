@@ -143,7 +143,7 @@ class Index extends Controller
 	{
 		$arrModelFirst=array();
 		foreach($aModelIterator as $key=>$aModel)
-		{	//var_dump($aModel);
+		{	
 			$arrModelFirst[$key]=array('eid'=>$aModel['eid'],'extname'=>$aModel['ext_name'],'title'=>$aModel['title']
 					,'description'=>$aModel['description'],'createtime'=>$aModel['createTime']
 					,'version'=>$aModel['version'],'extversion_int'=>Version::from32Integer($aModel['ext_version_int'])->toString()
@@ -156,50 +156,60 @@ class Index extends Controller
 			
 			foreach($aModel['dependence'] as $adependence)
 			{
-				switch($adependence['dependence.type'])
+				switch($adependence['type'])
 				{
 					case 'language';
-						$arrModelFirst[$key]['dependence'][]=array('type'=>$adependence['dependence.type'],'itemname'=>$adependence['dependence.itemname']
-								,'low'=>Version::from32Integer($adependence['dependence.low'])->toString()
-								,'high'=>$adependence['dependence.high']==null ?null :Version::from32Integer($adependence['dependence.high'])->toString()
-								,'lowcompare'=>$adependence['dependence.lowcompare'],'highcompare'=>$adependence['dependence.highcompare']
+						$arrModelFirst[$key]['dependence'][]=array('type'=>$adependence['type'],'itemname'=>$adependence['itemname']
+								,'low'=>Version::from32Integer($adependence['low'])->toString()
+								,'high'=>$adependence['high']==null ?null :Version::from32Integer($adependence['high'])->toString()
+								,'lowcompare'=>$adependence['lowcompare'],'highcompare'=>$adependence['highcompare']
 								,'typeCh'=>'语言','itemnameCh'=>null
 						);
 						break;
 					case 'language_module';
-						$arrModelFirst[$key]['dependence'][]=array('type'=>$adependence['dependence.type'],'itemname'=>$adependence['dependence.itemname']
-								,'low'=>Version::from32Integer($adependence['dependence.low'])->toString()
-								,'high'=>$adependence['dependence.high']==null ?null :Version::from32Integer($adependence['dependence.high'])->toString()
-								,'lowcompare'=>$adependence['dependence.lowcompare'],'highcompare'=>$adependence['dependence.highcompare']
+						$arrModelFirst[$key]['dependence'][]=array('type'=>$adependence['type'],'itemname'=>$adependence['itemname']
+								,'low'=>Version::from32Integer($adependence['low'])->toString()
+								,'high'=>$adependence['high']==null ?null :Version::from32Integer($adependence['high'])->toString()
+								,'lowcompare'=>$adependence['lowcompare'],'highcompare'=>$adependence['highcompare']
 								,'typeCh'=>'语言模块','itemnameCh'=>null
 						);
 						break;
 					case 'framework';
-						$arrModelFirst[$key]['dependence'][]=array('type'=>$adependence['dependence.type'],'itemname'=>$adependence['dependence.itemname']
-								,'low'=>Version::from32Integer($adependence['dependence.low'])->toString()
-								,'high'=>$adependence['dependence.high']==null ?null :Version::from32Integer($adependence['dependence.high'])->toString()
-								,'lowcompare'=>$adependence['dependence.lowcompare'],'highcompare'=>$adependence['dependence.highcompare']
+						$arrModelFirst[$key]['dependence'][]=array('type'=>$adependence['type'],'itemname'=>$adependence['itemname']
+								,'low'=>Version::from32Integer($adependence['low'])->toString()
+								,'high'=>$adependence['high']==null ?null :Version::from32Integer($adependence['high'])->toString()
+								,'lowcompare'=>$adependence['lowcompare'],'highcompare'=>$adependence['highcompare']
 								,'typeCh'=>'支持框架','itemnameCh'=>'蜂巢框架'
 						);
 						break;
 					case 'platform';
-						$arrModelFirst[$key]['dependence'][]=array('type'=>$adependence['dependence.type'],'itemname'=>$adependence['dependence.itemname']
-								,'low'=>Version::from32Integer($adependence['dependence.low'])->toString()
-								,'high'=>$adependence['dependence.high']==null ?null :Version::from32Integer($adependence['dependence.high'])->toString()
-								,'lowcompare'=>$adependence['dependence.lowcompare'],'highcompare'=>$adependence['dependence.highcompare']
+						$arrModelFirst[$key]['dependence'][]=array('type'=>$adependence['type'],'itemname'=>$adependence['itemname']
+								,'low'=>Version::from32Integer($adependence['low'])->toString()
+								,'high'=>$adependence['high']==null ?null :Version::from32Integer($adependence['high'])->toString()
+								,'lowcompare'=>$adependence['lowcompare'],'highcompare'=>$adependence['highcompare']
 								,'typeCh'=>'平台','itemnameCh'=>'蜂巢平台'
 						);
 						break;
 					case 'extension';
-						
-						$aExt = Extension::flyweight($adependence['dependence.itemname']);
-						$arrModelFirst[$key]['dependence'][]=array('type'=>$adependence['dependence.type'],'itemname'=>$adependence['dependence.itemname']
-								,'low'=>Version::from32Integer($adependence['dependence.low'])->toString()
-								,'high'=>$adependence['dependence.high']==null ?null :Version::from32Integer($adependence['dependence.high'])->toString()
-								,'lowcompare'=>$adependence['dependence.lowcompare'],'highcompare'=>$adependence['dependence.highcompare']
-								,'typeCh'=>'扩展','itemnameCh'=>$aExt->metainfo()->title()==null ? null :$aExt->metainfo()->title()
-						);
-						break;	
+						$aExt = Extension::flyweight($adependence['itemname']);
+						if($aExt){
+							$arrModelFirst[$key]['dependence'][]=array('type'=>$adependence['type'],'itemname'=>$adependence['itemname']
+									,'low'=>Version::from32Integer($adependence['low'])->toString()
+									,'high'=>$adependence['high']==null ?null :Version::from32Integer($adependence['high'])->toString()
+									,'lowcompare'=>$adependence['lowcompare'],'highcompare'=>$adependence['highcompare']
+									,'typeCh'=>'扩展','itemnameCh'=>$aExt->metainfo()->title()==null ? null :$aExt->metainfo()->title()
+							);
+							break;
+						}else{
+							$arrModelFirst[$key]['dependence'][]=array('type'=>$adependence['type'],'itemname'=>$adependence['itemname']
+									,'low'=>Version::from32Integer($adependence['low'])->toString()
+									,'high'=>$adependence['high']==null ?null :Version::from32Integer($adependence['high'])->toString()
+									,'lowcompare'=>$adependence['lowcompare'],'highcompare'=>$adependence['highcompare']
+									,'typeCh'=>'扩展','itemnameCh'=>''
+							);
+							break;
+						}
+
 				};
 			}
 		}

@@ -10,7 +10,6 @@
 	<publicFolder folder="/public" />
 	
 	<template folder="/template" />
-	<template folder="/template_coresystem"  for ='coresystem'/>
 	
 	<beanFolder folder="/bean" />
 	
@@ -21,13 +20,7 @@
 	]]>
 	</require>
 	
-	<!-- 依赖脚本语言模块-->
-	<require type="language_module" item="dd"><![CDATA[ >=5.3,<5.8 ]]></require>
-	<require type="language_module" item="dds"><![CDATA[ >=0.1 ]]></require>
 	<!-- 依赖蜂巢系统-->
 	<require type="platform"><![CDATA[ >=0.1 ]]></require>
-	
-	<!-- 依赖其他扩展-->
-	<require type="extension" item="doccenter"><![CDATA[ >=0.1 ]]></require>
 	
 </Extension>

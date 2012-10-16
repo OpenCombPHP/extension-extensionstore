@@ -1,5 +1,4 @@
 <lib name='jquery'/>
-<lib name='jquery.farbtastic'/>
 <css src="extensionstore:css/Index.css" />
 <resrc />
 <js src="coresystem:js/jquery-1.7.1.js"/>
@@ -93,7 +92,7 @@
 		var nHost = iframeSrc.indexOf("setupHost"); 
 		var host = iframeSrc.substring(nHost+10);
 		pkgUrl ='http://'+'{/*.url.host}'+'/'+pkgUrl;
-		showModalDialog("http://"+host+"?c=org.opencomb.coresystem.system.ExtensionDownloadSetup&pkgUrl="+pkgUrl);
+		showModalDialog("http://"+host+"?c=org.opencomb.coresystem.system.ExtensionDownloadSetup&rspn=noframe&pkgUrl="+pkgUrl);
 	}
 
 
@@ -158,7 +157,7 @@
 								<a href="http://{/*.url.host}/{=$item2['pkgUrl']}">下载</a>
 							</div>
 							<div class="extensionState" attr.Flag="3">
-								<if"{=$bFlagBack}">
+								<if"$bFlagBack">
 									<div id="{=$key1.$key2.'setup'}" style="display:none;" attr.Flag="2">
 										<p>已安装最新版本</p>
 									</div>

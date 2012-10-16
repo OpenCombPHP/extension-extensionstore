@@ -95,8 +95,6 @@ class CreateExtension extends Controller
 				$sExtensionTitle = $aExtMetainfo->title();
  				$sExtensionDec = $aExtMetainfo->description();
  				
- 				
-				//exit;
 				if(!$sExtensionName || !$sExtensionVersionString || !$sExtensionDec){
 					$this->messageQueue ()->create ( Message::error, "metainfo不完整 , 缺少扩展名称或版本号，内容描述" );
 				}
@@ -190,11 +188,25 @@ class CreateExtension extends Controller
 				$dependenceModel->setData('type',$item->type());
 				$dependenceModel->setData('itemname','php');
 				$aLow=$item->versionScope()->low();
-				$dependenceModel->setData('low',empty($aLow)?null:$aLow->to32Integer());
 				$aHigh=$item->versionScope()->high();
-				$dependenceModel->setData('high',empty($aHigh)?null:$aHigh->to32Integer());
-				$dependenceModel->setData('lowcompare',$item->versionScope()->lowCompare());
-				$dependenceModel->setData('highcompare',$item->versionScope()->highCompare());
+				if($aLow && $aHigh){
+					if($aLow->to32Integer() == $aHigh->to32Integer()){
+						$dependenceModel->setData('low',empty($aLow)?null:$aLow->to32Integer());
+						$dependenceModel->setData('high',null);
+						$dependenceModel->setData('lowcompare','=');
+						$dependenceModel->setData('highcompare',null);
+					}else{
+						$dependenceModel->setData('low',empty($aLow)?null:$aLow->to32Integer());
+						$dependenceModel->setData('high',empty($aHigh)?null:$aHigh->to32Integer());
+						$dependenceModel->setData('lowcompare',$item->versionScope()->lowCompare());
+						$dependenceModel->setData('highcompare',$item->versionScope()->highCompare());
+					}
+				}else{
+					$dependenceModel->setData('low',empty($aLow)?null:$aLow->to32Integer());
+					$dependenceModel->setData('high',empty($aHigh)?null:$aHigh->to32Integer());
+					$dependenceModel->setData('lowcompare',$item->versionScope()->lowCompare());
+					$dependenceModel->setData('highcompare',$item->versionScope()->highCompare());
+				}
 				$dependenceModel->insert();
 				break ;
 				case 'language_module';
@@ -204,12 +216,29 @@ class CreateExtension extends Controller
 				$dependenceModel->setData('type',$item->type());
 				$dependenceModel->setData('itemname',$item->itemName());
 				$aLow=$item->versionScope()->low();
-				$dependenceModel->setData('low',empty($aLow)?null:$aLow->to32Integer());
 				$aHigh=$item->versionScope()->high();
-				$dependenceModel->setData('high',empty($aHigh)?null:$aHigh->to32Integer());
-				$dependenceModel->setData('lowcompare',$item->versionScope()->lowCompare());
+				if($aLow && $aHigh){
+					if($aLow->to32Integer() == $aHigh->to32Integer()){
+						$dependenceModel->setData('low',empty($aLow)?null:$aLow->to32Integer());
+						$dependenceModel->setData('high',null);
+						$dependenceModel->setData('lowcompare','=');
+						$dependenceModel->setData('highcompare',null);
+					}else{
+						$dependenceModel->setData('low',empty($aLow)?null:$aLow->to32Integer());
+						$dependenceModel->setData('high',empty($aHigh)?null:$aHigh->to32Integer());
+						$dependenceModel->setData('lowcompare',$item->versionScope()->lowCompare());
+						$dependenceModel->setData('highcompare',$item->versionScope()->highCompare());
+					}
+				}else{
+					$dependenceModel->setData('low',empty($aLow)?null:$aLow->to32Integer());
+					$dependenceModel->setData('high',empty($aHigh)?null:$aHigh->to32Integer());
+					$dependenceModel->setData('lowcompare',$item->versionScope()->lowCompare());
+					$dependenceModel->setData('highcompare',$item->versionScope()->highCompare());
+				}
+				/*看不懂
 				$dependenceModel->setData('highcouse org\opencomb\platform\ext\ExtensionMetainfo;
 						mpare',$item->versionScope()->highCompare());
+				*/
 				$dependenceModel->insert();
 				break;
 				case 'framework';
@@ -219,11 +248,25 @@ class CreateExtension extends Controller
 				$dependenceModel->setData('type',$item->type());
 				$dependenceModel->setData('itemname','framework');
 				$aLow=$item->versionScope()->low();
-				$dependenceModel->setData('low',empty($aLow)?null:$aLow->to32Integer());
 				$aHigh=$item->versionScope()->high();
-				$dependenceModel->setData('high',empty($aHigh)?null:$aHigh->to32Integer());
-				$dependenceModel->setData('lowcompare',$item->versionScope()->lowCompare());
-				$dependenceModel->setData('highcompare',$item->versionScope()->highCompare());
+				if($aLow && $aHigh){
+					if($aLow->to32Integer() == $aHigh->to32Integer()){
+						$dependenceModel->setData('low',empty($aLow)?null:$aLow->to32Integer());
+						$dependenceModel->setData('high',null);
+						$dependenceModel->setData('lowcompare','=');
+						$dependenceModel->setData('highcompare',null);
+					}else{
+						$dependenceModel->setData('low',empty($aLow)?null:$aLow->to32Integer());
+						$dependenceModel->setData('high',empty($aHigh)?null:$aHigh->to32Integer());
+						$dependenceModel->setData('lowcompare',$item->versionScope()->lowCompare());
+						$dependenceModel->setData('highcompare',$item->versionScope()->highCompare());
+					}
+				}else{
+					$dependenceModel->setData('low',empty($aLow)?null:$aLow->to32Integer());
+					$dependenceModel->setData('high',empty($aHigh)?null:$aHigh->to32Integer());
+					$dependenceModel->setData('lowcompare',$item->versionScope()->lowCompare());
+					$dependenceModel->setData('highcompare',$item->versionScope()->highCompare());
+				}
 				$dependenceModel->insert();
 				break;
 				case 'platform';
@@ -233,11 +276,25 @@ class CreateExtension extends Controller
 				$dependenceModel->setData('type',$item->type());
 				$dependenceModel->setData('itemname','opencomb');
 				$aLow=$item->versionScope()->low();
-				$dependenceModel->setData('low',empty($aLow)?null:$aLow->to32Integer());
 				$aHigh=$item->versionScope()->high();
-				$dependenceModel->setData('high',empty($aHigh)?null:$aHigh->to32Integer());
-				$dependenceModel->setData('lowcompare',$item->versionScope()->lowCompare());
-				$dependenceModel->setData('highcompare',$item->versionScope()->highCompare());
+				if($aLow && $aHigh){
+					if($aLow->to32Integer() == $aHigh->to32Integer()){
+						$dependenceModel->setData('low',empty($aLow)?null:$aLow->to32Integer());
+						$dependenceModel->setData('high',null);
+						$dependenceModel->setData('lowcompare','=');
+						$dependenceModel->setData('highcompare',null);
+					}else{
+						$dependenceModel->setData('low',empty($aLow)?null:$aLow->to32Integer());
+						$dependenceModel->setData('high',empty($aHigh)?null:$aHigh->to32Integer());
+						$dependenceModel->setData('lowcompare',$item->versionScope()->lowCompare());
+						$dependenceModel->setData('highcompare',$item->versionScope()->highCompare());
+					}
+				}else{
+					$dependenceModel->setData('low',empty($aLow)?null:$aLow->to32Integer());
+					$dependenceModel->setData('high',empty($aHigh)?null:$aHigh->to32Integer());
+					$dependenceModel->setData('lowcompare',$item->versionScope()->lowCompare());
+					$dependenceModel->setData('highcompare',$item->versionScope()->highCompare());
+				}
 				$dependenceModel->insert();
 				break;
 				case 'extension';
@@ -247,11 +304,26 @@ class CreateExtension extends Controller
 				$dependenceModel->setData('type',$item->type());
 				$dependenceModel->setData('itemname',$item->itemName());
 				$aLow=$item->versionScope()->low();
-				$dependenceModel->setData('low',empty($aLow)?null:$aLow->to32Integer());
 				$aHigh=$item->versionScope()->high();
-				$dependenceModel->setData('high',empty($aHigh)?null:$aHigh->to32Integer());
-				$dependenceModel->setData('lowcompare',$item->versionScope()->lowCompare());
-				$dependenceModel->setData('highcompare',$item->versionScope()->highCompare());
+				if($aLow && $aHigh){
+					if($aLow->to32Integer() == $aHigh->to32Integer()){
+						$dependenceModel->setData('low',empty($aLow)?null:$aLow->to32Integer());
+						$dependenceModel->setData('high',null);
+						$dependenceModel->setData('lowcompare','=');
+						$dependenceModel->setData('highcompare',null);
+					}else{
+						$dependenceModel->setData('low',empty($aLow)?null:$aLow->to32Integer());
+						$dependenceModel->setData('high',empty($aHigh)?null:$aHigh->to32Integer());
+						$dependenceModel->setData('lowcompare',$item->versionScope()->lowCompare());
+						$dependenceModel->setData('highcompare',$item->versionScope()->highCompare());
+					}
+				}else{
+					$dependenceModel->setData('low',empty($aLow)?null:$aLow->to32Integer());
+					$dependenceModel->setData('high',empty($aHigh)?null:$aHigh->to32Integer());
+					$dependenceModel->setData('lowcompare',$item->versionScope()->lowCompare());
+					$dependenceModel->setData('highcompare',$item->versionScope()->highCompare());
+				}
+
 				$dependenceModel->insert();
 				break;
 			}
