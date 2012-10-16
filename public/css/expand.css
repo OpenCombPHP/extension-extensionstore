@@ -1,0 +1,28 @@
+@charset "utf-8";
+/* CSS Document */
+body{ font-size:12px;}
+a{color:#0099cc; text-decoration:none}
+.clr{ clear:both}
+.addExtension{ padding:15px 0; clear:both; border-bottom:#e4e4e4 1px solid}
+.addExtension a{ display:block; text-align:center; text-decoration:none; font-size:12px;background: url(../images/buttoninput.png) no-repeat;width: 101px;height: 30px;line-height: 30px;border: 0;font-weight: 700;color: #3C2200;cursor: hand;}
+
+#extensionSetup{ background:#f9f9f9; padding:10px 20px;}
+h6{ border-bottom:#e4e4e4 1px solid; padding:10px; font-weight:normal; margin:0 0 2px; font-size:12px;}
+.extensionContent{ height:30px; line-height:30px;}
+
+.extensionContent span{ display:inline-block; height:30px; line-height:30px; float:left}
+.extensionUse{ float:right; height:30px; line-height:30px;}
+.extensionContent h3{ margin:0; font-size:14px; padding-right:10px;}
+.extensionUse span{ padding:0 10px;}
+.extensionDescription{ padding:3px 0; color:#999 }
+.extensionDescription a{ float:left}
+.extensionDescription span{ float:right; color:#999}
+.extensionDescriptionMore{line-height:26px;height:26px; overflow:hidden; max-width:85%; min-width:20%;}
+
+.extName a{padding:3px 0 3px 20px; background:url(../images/arrow.png) no-repeat 0 center;}
+.extensionDownLoad a{padding:3px 0 3px 18px; background:url(../images/down.png) no-repeat 0 center;}
+.extensionSetup a{padding:3px 0 3px 20px; background:url(../images/setupapp.png) no-repeat 0 center;}
+.extensionInstall{background:url(../images/tick.png) no-repeat 0 center; padding-left:20px; color:green}
+.extensionUp a{ color:#ff8400;padding:3px 0 3px 20px; background:url(../images/up.png) no-repeat 0 center;}
+
+.extensionDependence{ line-height:24px; color:#999; padding:0 0 0px 25px; background:url(../images/gl.png) repeat-y 8px 0}
